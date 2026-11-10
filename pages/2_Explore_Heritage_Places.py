@@ -5,7 +5,21 @@ import streamlit as st
 
 from kbyg.ai import ai_available, ask_grounded_guide
 from kbyg.core import load_places, place_context
-from kbyg.ui import CURATED_PHOTOS, hero, place_card, place_map, setup_page
+from kbyg.ui import hero, place_card, place_map, setup_page
+
+
+# A deliberately varied discovery set: faiths, communities, civic life, arts,
+# hospitality and public service. Session history prevents repetitive surprises.
+FEATURED_DISCOVERY_NAMES = {
+    "38 Oxley Road",
+    "Al-Abrar Mosque",
+    "Former Nagore Dargah",
+    "Jamae Mosque",
+    "Pondok Peranakan Gelam Club",
+    "Sri Mariamman Temple",
+    "Sultan Mosque",
+    "Thian Hock Keng",
+}
 
 
 setup_page("Explore Heritage Places", "🔎")
@@ -52,15 +66,29 @@ if not filtered:
 
 st.write(f"Showing **{len(filtered)}** official heritage places.")
 
-photo_ready = [place for place in filtered if place.name in CURATED_PHOTOS]
+discovery_places = [place for place in filtered if place.name in FEATURED_DISCOVERY_NAMES]
 if st.button(
-    "✨ Surprise me with a place",
-    help="Choose a heritage place with a verified photograph for you to discover.",
-    disabled=not photo_ready,
+    "✨ Surprise me — spark my curiosity",
+    type="primary",
+    help="Choose a varied Singapore heritage story, then ask the guide whatever it makes you wonder.",
+    disabled=not discovery_places,
 ):
-    current_name = st.session_state.get("explore_selected_name", "")
-    alternatives = [place for place in photo_ready if place.name != current_name] or photo_ready
-    st.session_state["explore_selected_name"] = random.choice(alternatives).name
+    history = st.session_state.get("surprise_history", [])
+    available_names = {place.name for place in discovery_places}
+    history = [name for name in history if name in available_names]
+    remaining = [place for place in discovery_places if place.name not in history]
+    if not remaining:
+        history = []
+        remaining = discovery_places
+    surprise = random.choice(remaining)
+    st.session_state["surprise_history"] = history + [surprise.name]
+    st.session_state["explore_selected_name"] = surprise.name
+    st.session_state["last_surprise_name"] = surprise.name
+
+st.caption(
+    "Not sure where to begin? Surprise Me rotates through a varied collection of Singapore "
+    "stories without repeating one until you have explored the full set."
+)
 
 preferred_name = st.session_state.get("explore_selected_name")
 default_index = next(
@@ -75,6 +103,11 @@ selected_name = st.selectbox(
 )
 st.session_state["explore_selected_name"] = selected_name
 place = next(place for place in filtered if place.name == selected_name)
+if st.session_state.get("last_surprise_name") == place.name:
+    st.info(
+        f"✨ Your surprise is **{place.name}**. Start with ‘Why does this place matter?’ "
+        "or ask the guide whatever this place makes you curious about."
+    )
 
 with st.expander("Browse these places on the map", expanded=False):
     st.caption("Use the filters above to narrow the map, then choose a place from the list.")
