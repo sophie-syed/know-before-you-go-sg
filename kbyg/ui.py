@@ -6,6 +6,7 @@ from pathlib import Path
 from urllib.parse import quote_plus
 
 import pandas as pd
+import pydeck as pdk
 import requests
 import streamlit as st
 
@@ -19,6 +20,12 @@ CURATED_PHOTOS = {
         "caption": "Former Nagore Dargah · Photo: Philip Nalangan (CC BY 4.0)",
         "source": "https://commons.wikimedia.org/wiki/File:Nagore_Dargah_Singapore.jpg",
     }
+}
+OFFICIAL_PHOTO_OVERRIDES = {
+    "Pondok Peranakan Gelam Club": (
+        "https://www.roots.gov.sg/api/media/313a34ad-8075-41a6-bb1b-bfb860bd4751/"
+        "063-pondok-perankan-club.png"
+    )
 }
 
 
@@ -145,19 +152,83 @@ def place_map(places: list[Place] | tuple[Place, ...], height: int = 430) -> Non
         ]
     )
     if len(frame) <= 12:
+        frame["pin_tail"] = "▼"
         legend = "".join(
             f'<span class="passport-chip">🌺 {html.escape(row.stop)} · {html.escape(row.name)}</span>'
             for row in frame.itertuples(index=False)
         )
         st.markdown(f'<div style="margin:.25rem 0 .7rem">{legend}</div>', unsafe_allow_html=True)
-    st.map(
-        frame,
-        latitude="lat",
-        longitude="lon",
-        size=18 if len(frame) <= 12 else 8,
-        color="#E876A7",
-        height=height,
-    )
+        pin_tail_layer = pdk.Layer(
+            "TextLayer",
+            data=frame,
+            get_position="[lon, lat]",
+            get_text="pin_tail",
+            get_color=[232, 93, 74, 255],
+            get_size=29,
+            get_pixel_offset=[0, 16],
+            get_alignment_baseline="center",
+            get_text_anchor="middle",
+            pickable=False,
+        )
+        marker_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=frame,
+            get_position="[lon, lat]",
+            get_fill_color=[232, 93, 74, 255],
+            get_line_color=[24, 63, 58, 255],
+            get_radius=22,
+            radius_units="pixels",
+            stroked=True,
+            line_width_min_pixels=3,
+            pickable=True,
+        )
+        marker_center_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=frame,
+            get_position="[lon, lat]",
+            get_fill_color=[255, 249, 237, 255],
+            get_radius=15,
+            radius_units="pixels",
+            pickable=False,
+        )
+        number_layer = pdk.Layer(
+            "TextLayer",
+            data=frame,
+            get_position="[lon, lat]",
+            get_text="stop",
+            get_color=[24, 63, 58, 255],
+            get_size=16,
+            get_alignment_baseline="center",
+            get_text_anchor="middle",
+            font_weight=800,
+            pickable=False,
+        )
+        st.pydeck_chart(
+            pdk.Deck(
+                layers=[pin_tail_layer, marker_layer, marker_center_layer, number_layer],
+                map_provider="carto",
+                initial_view_state=pdk.ViewState(
+                    latitude=float(frame["lat"].mean()),
+                    longitude=float(frame["lon"].mean()),
+                    zoom=14.5 if len(frame) > 1 else 16,
+                    pitch=0,
+                ),
+                tooltip={
+                    "html": "<b>Stop {stop}: {name}</b><br/>{type}",
+                    "style": {"backgroundColor": "#183F3A", "color": "white"},
+                },
+            ),
+            height=height,
+        )
+    else:
+        st.map(
+            frame,
+            latitude="lat",
+            longitude="lon",
+            size=8,
+            color="#E876A7",
+            height=height,
+        )
 
 
 def route_table(route: PlannedRoute) -> pd.DataFrame:
@@ -200,7 +271,7 @@ def _download_photo(url: str) -> bytes | None:
 
 
 @st.cache_data(show_spinner=False, ttl=604_800)
-def _official_page_photo(page_url: str) -> bytes | None:
+def _official_page_photo(page_url: str, legacy_photo_url: str = "") -> bytes | None:
     """Use the image declared by the official Roots page when an old dataset URL fails."""
     if not page_url:
         return None
@@ -220,12 +291,27 @@ def _official_page_photo(page_url: str) -> bytes | None:
             page.text,
             flags=re.IGNORECASE,
         )
-        if not match:
-            return None
-        image_url = html.unescape(match.group(1))
-        if image_url.startswith("/"):
-            image_url = "https://www.roots.gov.sg" + image_url
-        return _download_photo(image_url)
+        candidates = [html.unescape(match.group(1))] if match else []
+        candidates.extend(
+            html.unescape(url)
+            for url in re.findall(
+                r'(?:https://www\.roots\.gov\.sg)?(/api/media/[^"\'<> ]+)',
+                page.text,
+                flags=re.IGNORECASE,
+            )
+        )
+        candidates = [
+            ("https://www.roots.gov.sg" + url) if url.startswith("/") else url
+            for url in candidates
+        ]
+        legacy_filename = legacy_photo_url.rsplit("/", 1)[-1].lower()
+        if legacy_filename:
+            candidates.sort(key=lambda url: legacy_filename not in url.lower())
+        for image_url in dict.fromkeys(candidates):
+            photo = _download_photo(image_url)
+            if photo:
+                return photo
+        return None
     except requests.RequestException:
         return None
 
@@ -370,31 +456,26 @@ def place_card(place: Place, number: int | None = None) -> None:
         st.link_button("See the surroundings in Street View ↗", google_street_view_url(place))
     with cols[1]:
         curated = CURATED_PHOTOS.get(place.name)
-        photo = None if curated else (_download_photo(place.photo_url) or _official_page_photo(place.official_url))
+        official_photo_url = OFFICIAL_PHOTO_OVERRIDES.get(place.name, place.photo_url)
+        photo = None if curated else (
+            _download_photo(official_photo_url)
+            or _official_page_photo(place.official_url, place.photo_url)
+        )
         if curated:
             st.image(str(curated["path"]), caption=str(curated["caption"]), width="stretch")
             st.link_button("Photo source and licence ↗", str(curated["source"]))
         elif photo:
             st.image(photo, caption=f"{place.name} · National Heritage Board", width="stretch")
+            if place.official_url:
+                st.link_button("See more official photos ↗", place.official_url)
         else:
-            commons_photo, licence, commons_url = _commons_photo(place.name)
-            if commons_photo:
-                st.image(commons_photo, caption=f"{place.name} · Wikimedia Commons", width="stretch")
-                source_text = f"Photo source and attribution ({licence or 'licence details'}) ↗"
-                st.link_button(source_text, commons_url)
-            else:
-                wikipedia_photo, wikipedia_url = _wikipedia_photo(place.name)
-                if wikipedia_photo:
-                    st.image(wikipedia_photo, caption=f"{place.name} · Wikipedia/Wikimedia Commons", width="stretch")
-                    if wikipedia_url:
-                        st.link_button("View photograph source and attribution ↗", wikipedia_url)
-                elif place.official_url:
-                    safe_url = html.escape(place.official_url, quote=True)
-                    st.markdown(
-                        f'<a href="{safe_url}" target="_blank" style="text-decoration:none">'
-                        '<div class="photo-fallback"><div><span class="landmark">🏛️</span>'
-                        '<b>Open the official photo gallery ↗</b><br>'
-                        '<small>National Heritage Board · Roots.gov.sg</small>'
-                        '</div></div></a>',
-                        unsafe_allow_html=True,
-                    )
+            if place.official_url:
+                safe_url = html.escape(place.official_url, quote=True)
+                st.markdown(
+                    f'<a href="{safe_url}" target="_blank" style="text-decoration:none">'
+                    '<div class="photo-fallback"><div><span class="landmark">📷</span>'
+                    '<b>Photograph unavailable here</b><br>'
+                    '<small>Open the official Roots page to view its gallery ↗</small>'
+                    '</div></div></a>',
+                    unsafe_allow_html=True,
+                )

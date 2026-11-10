@@ -25,6 +25,21 @@ hero(
 places = load_places()
 
 
+def generate_route_story(route, audience: str, style: str) -> str:
+    return ask_grounded_guide(
+        "Make this route feel genuinely worth taking, not like a directory listing. Open with "
+        "a compelling but factual hook. Explain why these places matter, what is surprising or "
+        "human about their official stories, and what their proximity reveals about Singapore. "
+        "Give each stop a different, specific reason to care and one concrete thing to notice. "
+        "For every stop, write two or three complete sentences: first explain its human or historical "
+        "significance, then give a specific visual detail to seek out. Do not use vague phrases such "
+        "as 'take a moment to appreciate' or merely list nearby buildings. "
+        f"Use short paragraphs and vivid plain language. Style: {style}.",
+        route_context(route),
+        audience,
+    )
+
+
 def route_markdown(route) -> str:
     lines = [
         f"# My {route.start_name} heritage walk",
@@ -113,6 +128,7 @@ if submitted:
         "interests": interests,
     }
     st.session_state.pop("route_story", None)
+    st.session_state.pop("route_story_error", None)
 
 route = st.session_state.get("planned_route")
 if route:
@@ -142,6 +158,15 @@ if route:
         st.warning("No route fits those limits. Increase the time or walking distance and try again.")
         st.stop()
 
+    audience = st.session_state.get("route_audience", "Curious adults")
+    style = st.session_state.get("route_style", "Warm and conversational")
+    if ai_available() and not st.session_state.get("route_story") and not st.session_state.get("route_story_error"):
+        with st.spinner("Connecting the stories behind your route..."):
+            try:
+                st.session_state["route_story"] = generate_route_story(route, audience, style)
+            except Exception as exc:
+                st.session_state["route_story_error"] = str(exc)
+
     action_cols = st.columns(3)
     with action_cols[0]:
         settings = st.session_state.get("route_settings", {})
@@ -154,6 +179,7 @@ if route:
             if alternative.stops:
                 st.session_state["planned_route"] = alternative
                 st.session_state.pop("route_story", None)
+                st.session_state.pop("route_story_error", None)
                 st.rerun()
             else:
                 st.info("No different route fits these limits. Try allowing more time or walking distance.")
@@ -172,27 +198,9 @@ if route:
     st.dataframe(route_table(route), hide_index=True, width="stretch")
 
     st.subheader("Your route story")
-    audience = st.session_state.get("route_audience", "Curious adults")
-    style = st.session_state.get("route_style", "Warm and conversational")
     if ai_available():
-        if st.button("✨ Tell me why this route is worth it", type="primary"):
-            with st.spinner("Connecting the stories..."):
-                try:
-                    story = ask_grounded_guide(
-                        "Make this route feel genuinely worth taking, not like a directory listing. Open with "
-                        "a compelling but factual hook. Explain why these places matter, what is surprising or "
-                        "human about their official stories, and what their proximity reveals about Singapore. "
-                        "Give each stop a different, specific reason to care and one concrete thing to notice. "
-                        "For every stop, write two or three complete sentences: first explain its human or historical "
-                        "significance, then give a specific visual detail to seek out. Do not use vague phrases such "
-                        "as 'take a moment to appreciate' or merely list nearby buildings. "
-                        f"Use short paragraphs and vivid plain language. Style: {style}.",
-                        route_context(route),
-                        audience,
-                    )
-                    st.session_state["route_story"] = story
-                except Exception as exc:
-                    st.error(f"The AI guide could not respond: {exc}")
+        if st.session_state.get("route_story_error"):
+            st.warning("The personalised story could not load, so a shorter data-based summary is shown instead.")
         st.write(st.session_state.get("route_story", fallback_route_story(route, audience)))
     else:
         st.write(fallback_route_story(route, audience))
