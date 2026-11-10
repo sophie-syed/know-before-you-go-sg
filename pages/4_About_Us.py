@@ -36,8 +36,8 @@ st.subheader("Features")
 st.markdown(
     """
 1. **Personalised heritage planner:** selects and orders a manageable set of nearby stops.
-2. **Grounded cultural guide:** explains a selected place or route using only supplied NHB context.
-3. **Cultural map:** lets users search and inspect the source dataset directly.
+2. **Explore heritage places:** combines a searchable national map, official place cards and grounded cultural-guide questions.
+3. **Grounded route storytelling:** explains why a selected route matters using bounded official NHB context.
 """
 )
 
