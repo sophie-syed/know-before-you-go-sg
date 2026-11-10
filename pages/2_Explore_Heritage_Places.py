@@ -8,11 +8,24 @@ from kbyg.ui import hero, place_card, place_map, setup_page
 
 setup_page("Explore Heritage Places", "🔎")
 hero(
-    "Explore Singapore’s heritage places",
-    "Search or browse the national map, choose a place that catches your eye, then view its photograph and ask the cultural guide why it matters.",
+    "Ask Singapore’s cultural guide",
+    "Choose an official heritage place, read its story and ask your own questions. The guide answers from a curated government evidence layer—not the open internet.",
 )
 
 places = load_places()
+st.markdown(
+    """
+    <div class="passport-panel">
+    <b>How to use this page</b><br>
+    <b>1.</b> Search by a place, neighbourhood or theme and choose a heritage site.<br>
+    <b>2.</b> Ask a suggested question or type one naturally in your own words.<br>
+    <b>3.</b> Read the answer alongside the official description, photograph and source link.
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.subheader("1. Find a heritage place")
 types = st.multiselect(
     "Place type",
     ["National monument", "Historic site"],
@@ -36,33 +49,44 @@ if not filtered:
     st.stop()
 
 st.write(f"Showing **{len(filtered)}** official heritage places.")
-place_map(filtered)
-
-st.divider()
-st.subheader("Choose a place to explore")
-selected_name = st.selectbox("Heritage place", [place.name for place in filtered])
+selected_name = st.selectbox(
+    "Choose a place to explore",
+    [place.name for place in filtered],
+    help="The map helps you see where the filtered places are; use this list to open one.",
+)
 place = next(place for place in filtered if place.name == selected_name)
-place_card(place)
 
-st.subheader("Ask the cultural guide")
+with st.expander("Browse these places on the map", expanded=False):
+    st.caption("Use the filters above to narrow the map, then choose a place from the list.")
+    place_map(filtered)
+
+st.subheader(f"2. Ask the cultural guide about {place.name}")
+st.write(
+    "Ask what makes it significant, what to notice when you visit, or how it connects "
+    "to Singapore’s communities. Answers are restricted to the curated official evidence supplied to the guide."
+)
 suggestions = [
     "Why does this place matter?",
     "Explain this to a 10-year-old.",
     "What should I pay attention to when I arrive?",
-    "What does the official information not tell me?",
+    "How does this place connect to Singapore’s communities?",
 ]
-question = st.selectbox("Start with a question", suggestions + ["Write my own question"])
-if question == "Write my own question":
-    question = st.text_area("Your question")
+suggested_question = st.selectbox("Start with a suggested question", suggestions)
+own_question = st.text_area(
+    "Or ask in your own words",
+    placeholder="For example: Why are Jamae Mosque and Sri Mariamman Temple so close together?",
+    help="If you type here, this question will be used instead of the suggested one.",
+)
+question = own_question.strip() or suggested_question
 audience = st.selectbox(
     "Explanation for",
     ["General public", "A child", "A new resident", "A history enthusiast"],
 )
 
-if st.button("Ask", type="primary", disabled=not question):
+if st.button("Ask the cultural guide", type="primary", disabled=not question):
     if not ai_available():
         st.info(
-            "The official description above is available now. Configure the OpenAI key in "
+            "The official record below is available now. Configure the OpenAI key in "
             "Streamlit secrets to activate grounded follow-up answers."
         )
     else:
@@ -81,7 +105,11 @@ if (
 ):
     st.success(st.session_state["place_answer"])
 
-with st.expander("View the filtered official dataset"):
+st.subheader(f"3. Explore the official record for {place.name}")
+st.caption("See the government dataset summary, verified photograph where available, visit prompt and official source.")
+place_card(place)
+
+with st.expander("View the filtered government dataset"):
     table = pd.DataFrame(
         [
             {

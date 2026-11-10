@@ -12,7 +12,7 @@ from kbyg.core import (
     route_context,
 )
 from kbyg.onemap import onemap_available, walking_route
-from kbyg.ui import hero, place_card, place_map, route_table, setup_page
+from kbyg.ui import hero, place_card, place_map, place_photo, route_table, setup_page
 
 
 setup_page("Plan My Outing", "🗺️")
@@ -25,18 +25,31 @@ places = load_places()
 
 
 def generate_route_story(route, audience: str, style: str) -> str:
-    return ask_grounded_guide(
+    story = ask_grounded_guide(
         "Make this route feel genuinely worth taking, not like a directory listing. Open with "
         "a compelling but factual hook. Explain why these places matter, what is surprising or "
         "human about their official stories, and what their proximity reveals about Singapore. "
-        "Give each stop a different, specific reason to care and one concrete thing to notice. "
-        "For every stop, write two or three complete sentences: first explain its human or historical "
-        "significance, then give a specific visual detail to seek out. Do not use vague phrases such "
-        "as 'take a moment to appreciate' or merely list nearby buildings. "
-        f"Use short paragraphs and vivid plain language. Style: {style}.",
+        "Give each stop a different, specific reason to care. Include a visual detail only when the "
+        "supplied official evidence explicitly supports it. If no visual detail is supplied, omit it "
+        "entirely: never mention missing information, an absent photograph, an unspecified feature, "
+        "or what the supplied record does not say. Do not pad the answer or merely list nearby buildings. "
+        f"Use short paragraphs, vivid plain language and roughly 180 to 260 words. Style: {style}.",
         route_context(route),
         audience,
     )
+    blocked_phrases = (
+        "supplied record does not", "supplied record gives no", "no specific visual detail",
+        "no verified historic feature", "does not describe a particular", "photograph unavailable",
+    )
+    paragraphs = []
+    for paragraph in story.splitlines():
+        sentences = [
+            sentence for sentence in paragraph.split(". ")
+            if not any(phrase in sentence.lower() for phrase in blocked_phrases)
+        ]
+        if sentences:
+            paragraphs.append(". ".join(sentences))
+    return "\n\n".join(paragraphs)
 
 
 def route_markdown(route) -> str:
@@ -49,7 +62,7 @@ def route_markdown(route) -> str:
     ]
     story = st.session_state.get("route_story")
     if story:
-        lines.extend(["## Why this route is worth exploring", "", story, ""])
+        lines.extend(["## The story behind your walk", "", story, ""])
     lines.extend(["## Stops", ""])
     for number, stop in enumerate(route.stops, start=1):
         place = stop.place
@@ -166,8 +179,12 @@ if route:
             except Exception as exc:
                 st.session_state["route_story_error"] = str(exc)
 
+    st.subheader("Take your outing with you")
+    st.caption("Choose what you would like to do next. Your generated outing remains on this page.")
     action_cols = st.columns(3)
     with action_cols[0]:
+        st.markdown("**Try different stops**")
+        st.caption("Keep your current preferences, but replace these places with another route that fits.")
         settings = st.session_state.get("route_settings", {})
         if st.button("🔀 Try different stops", width="stretch") and settings:
             alternative = plan_route(
@@ -183,42 +200,63 @@ if route:
             else:
                 st.info("No different route fits these limits. Try allowing more time or walking distance.")
     with action_cols[1]:
+        st.markdown("**Open the full route**")
+        st.caption("Send every stop to Google Maps for connected walking navigation on your phone.")
         st.link_button("🗺️ Open in Google Maps", google_maps_route_url(route), width="stretch")
     with action_cols[2]:
+        st.markdown("**Keep an offline reference**")
+        st.caption("Download the story, itinerary, addresses and official links to read again later.")
         st.download_button(
-            "⬇️ Download my outing",
+            "⬇️ Download outing guide",
             data=route_markdown(route),
-            file_name=f"{route.start_name.lower().replace(' ', '-')}-heritage-walk.txt",
-            mime="text/plain",
+            file_name=f"{route.start_name.lower().replace(' ', '-')}-heritage-walk.md",
+            mime="text/markdown",
             width="stretch",
         )
+
+    st.caption("Google Maps requires a connection for walking directions. The downloaded guide can be kept for offline reference.")
 
     st.subheader("Your itinerary")
     st.dataframe(route_table(route), hide_index=True, width="stretch")
 
-    st.subheader("Why this route matters")
-    if ai_available():
-        if st.session_state.get("route_story_error"):
-            st.warning("The personalised story could not load, so a shorter data-based summary is shown instead.")
-        st.write(st.session_state.get("route_story", fallback_route_story(route, audience)))
-    else:
-        st.write(fallback_route_story(route, audience))
-        st.info(
-            "The route planner is working. Add an OpenAI API key to Streamlit secrets to activate "
-            "the personalised LLM introduction and cultural-guide Q&A."
-        )
+    st.subheader("Explore your outing")
+    st.caption("Start with the story, then use the tabs to inspect each stop or open the route map.")
+    story_tab, stops_tab, map_tab = st.tabs(["📖 Story", "📍 Stops", "🗺️ Route map"])
+    with story_tab:
+        st.subheader("The story behind your walk")
+        if ai_available():
+            if st.session_state.get("route_story_error"):
+                st.warning("The personalised story could not load, so a shorter data-based summary is shown instead.")
+            st.write(st.session_state.get("route_story", fallback_route_story(route, audience)))
+        else:
+            st.write(fallback_route_story(route, audience))
+            st.info("Add an OpenAI API key to activate personalised storytelling and cultural-guide Q&A.")
 
-    if not official_walking:
-        st.caption(
-            "Times use straight-line distance as a prototype estimate and include 15 minutes at each stop. "
-            "They are not turn-by-turn directions. Configure OneMap to enable official walking estimates."
-        )
+        gallery = []
+        for stop in route.stops:
+            photo, caption, source = place_photo(stop.place)
+            if photo:
+                gallery.append((photo, caption, source))
+        if gallery:
+            st.markdown("#### Places in this story")
+            gallery_cols = st.columns(min(3, len(gallery)))
+            for index, (photo, caption, source) in enumerate(gallery):
+                with gallery_cols[index % len(gallery_cols)]:
+                    st.image(photo, caption=caption, width="stretch")
+                    if source:
+                        st.link_button("Official photo source ↗", source, width="stretch")
 
-    st.subheader("Stops")
-    for number, stop in enumerate(route.stops, start=1):
-        with st.expander(f"{number}. {stop.place.name}", expanded=True):
-            place_card(stop.place, number)
+        if not official_walking:
+            st.caption(
+                "Times use straight-line distance as a prototype estimate and include 15 minutes at each stop. "
+                "They are not turn-by-turn directions."
+            )
 
-    st.subheader("Your route map")
-    st.caption("Match each coloured point to the numbered key and itinerary above.")
-    place_map([stop.place for stop in route.stops])
+    with stops_tab:
+        for number, stop in enumerate(route.stops, start=1):
+            with st.expander(f"{number}. {stop.place.name}", expanded=True):
+                place_card(stop.place, number)
+
+    with map_tab:
+        st.caption("Match each coloured point to the numbered key and itinerary above.")
+        place_map([stop.place for stop in route.stops])

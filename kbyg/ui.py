@@ -28,6 +28,21 @@ OFFICIAL_PHOTO_OVERRIDES = {
 }
 
 
+def place_photo(place: Place) -> tuple[str | bytes | None, str, str]:
+    """Return one verified place photograph, its caption and its source page."""
+    curated = CURATED_PHOTOS.get(place.name)
+    if curated:
+        return str(curated["path"]), str(curated["caption"]), str(curated["source"])
+
+    official_photo_url = OFFICIAL_PHOTO_OVERRIDES.get(place.name, place.photo_url)
+    photo = _download_photo(official_photo_url) or _official_page_photo(
+        place.official_url, place.photo_url
+    )
+    if photo:
+        return photo, f"{place.name} · National Heritage Board", place.official_url
+    return None, "", place.official_url
+
+
 REQUIRED_DISCLAIMER = """IMPORTANT NOTICE: This web application is a prototype developed for educational purposes only. The information provided here is NOT intended for real-world usage and should not be relied upon for making any decisions, especially those related to financial, legal, or healthcare matters.
 
 Furthermore, please be aware that the LLM may generate inaccurate or incorrect information. You assume full responsibility for how you use any generated output.
@@ -414,19 +429,11 @@ def place_card(place: Place, number: int | None = None) -> None:
         st.link_button("Find this stop in Google Maps ↗", google_maps_place_url(place))
         st.link_button("See the surroundings in Street View ↗", google_street_view_url(place))
     with cols[1]:
-        curated = CURATED_PHOTOS.get(place.name)
-        official_photo_url = OFFICIAL_PHOTO_OVERRIDES.get(place.name, place.photo_url)
-        photo = None if curated else (
-            _download_photo(official_photo_url)
-            or _official_page_photo(place.official_url, place.photo_url)
-        )
-        if curated:
-            st.image(str(curated["path"]), caption=str(curated["caption"]), width="stretch")
-            st.link_button("Photo source and licence ↗", str(curated["source"]))
-        elif photo:
-            st.image(photo, caption=f"{place.name} · National Heritage Board", width="stretch")
-            if place.official_url:
-                st.link_button("See more official photos ↗", place.official_url)
+        photo, caption, photo_source = place_photo(place)
+        if photo:
+            st.image(photo, caption=caption, width="stretch")
+            if photo_source:
+                st.link_button("See photo source and gallery ↗", photo_source)
         else:
             if place.official_url:
                 safe_url = html.escape(place.official_url, quote=True)

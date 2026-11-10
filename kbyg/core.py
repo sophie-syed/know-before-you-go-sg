@@ -90,6 +90,31 @@ OFFICIAL_PLACE_CONTEXT = {
         "stopover for regional pilgrims travelling to Mecca. Official source: "
         "https://www.roots.gov.sg/places/places-landing/Places/national-monuments/sultan-mosque"
     ),
+    "Jamae Mosque": (
+        "Official NHB context: Chulia Muslim immigrants from southern India's Coromandel Coast "
+        "established a mosque here around 1826; the present building dates from 1830 to 1835. "
+        "Its prominent octagonal minarets, Indo-Islamic design, Tuscan columns, ventilating "
+        "verandahs and Chinese green-glazed tiles reflect several architectural traditions. "
+        "It remains a place of worship and is one of the few Singapore mosques offering religious "
+        "classes in Tamil. Official source: https://www.roots.gov.sg/places/places-landing/Places/"
+        "national-monuments/jamae-mosque"
+    ),
+    "Sri Mariamman Temple": (
+        "Official NHB context: Founded by Tamil pioneer Naraina Pillai, Sri Mariamman Temple is "
+        "Singapore's oldest Hindu temple. Its early role went beyond worship: it sheltered newly "
+        "arrived Indian immigrants and provided a social meeting place. The present five-tiered "
+        "gopuram dates from 1925 and is covered with brightly painted sculptures. The temple "
+        "continues to host Theemithi, the annual fire-walking festival. Official source: "
+        "https://www.roots.gov.sg/places/places-landing/Places/national-monuments/sri-mariamman-temple"
+    ),
+    "Pondok Peranakan Gelam Club": (
+        "Official NHB context: Registered in 1932, this communal lodging club was founded by "
+        "Baweanese migrants to support newcomers from the Gelam area of Bawean Island, Indonesia. "
+        "During the racial riots of 1945 and 1964, Chinese neighbours sheltered Baweanese residents, "
+        "making the site a story of mutual aid across communities. The lodging house no longer "
+        "operates here; the marker commemorates the former location. Official source: "
+        "https://www.roots.gov.sg/places/places-landing/Places/historic-sites/pondok-peranakan-gelam-club"
+    ),
 }
 
 OFFICIAL_AREA_CONTEXT = {
