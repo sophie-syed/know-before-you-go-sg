@@ -14,7 +14,7 @@ navigation = st.navigation(
             url_path="explore-heritage-places",
         ),
         st.Page("pages/4_About_Us.py", title="About Us", icon="🌺", url_path="about-us"),
-        st.Page("pages/5_Methodology.py", title="Methodology", icon="📚", url_path="methodology"),
+        st.Page("pages/5_Methodology.py", title="How It Works", icon="📚", url_path="methodology"),
     ]
 )
 navigation.run()

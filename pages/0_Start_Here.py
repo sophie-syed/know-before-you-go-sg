@@ -50,7 +50,7 @@ with st.expander("What is each page for?"):
 - **Plan My Outing:** Creates a personalised, downloadable heritage trail.
 - **Explore Heritage Places:** Lets you browse the national map, view place photographs and ask grounded cultural-guide questions.
 - **About Us:** Explains the problem, project objectives, features, official data sources and limitations.
-- **Methodology:** Shows how the data, route logic and LLM work, including a flowchart for each use case.
+- **How It Works:** Shows how the website was built, how the route logic and LLM work, and what the prototype cannot yet do.
 """
     )
 

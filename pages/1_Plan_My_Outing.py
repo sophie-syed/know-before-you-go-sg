@@ -221,5 +221,5 @@ if route:
             place_card(stop.place, number)
 
     st.subheader("Your route map")
-    st.caption("Match each numbered pin to the itinerary and stop cards above.")
+    st.caption("Match each coloured point to the numbered key and itinerary above.")
     place_map([stop.place for stop in route.stops])

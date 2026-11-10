@@ -3,11 +3,19 @@ import streamlit as st
 from kbyg.ui import hero, require_password, setup_page
 
 
-setup_page("Methodology", "🧪")
+setup_page("How It Works", "🧪")
 require_password()
 hero(
-    "Methodology",
-    "How official data becomes a personalised route and how the LLM is kept grounded.",
+    "How this website works",
+    "How official data becomes a personalised outing, how the AI guide is kept grounded, and what the prototype cannot yet do.",
+)
+
+st.subheader("How it was built")
+st.write(
+    "Know Before You Go SG is a Streamlit prototype built with Python. It combines National "
+    "Heritage Board place records, deterministic route-planning logic, optional SLA OneMap "
+    "walking estimates and an OpenAI-generated cultural explanation grounded in selected "
+    "official records."
 )
 
 st.subheader("Data flow")
@@ -88,4 +96,22 @@ st.markdown(
 - Estimates are labelled as estimates.
 - Changing operational information is deliberately excluded from generated answers.
 """
+)
+
+st.subheader("Limitations and future improvements")
+st.markdown(
+    """
+- **Accessibility information:** The NHB geospatial datasets do not consistently state whether entrances, paths, parking, seating or toilets are wheelchair accessible. The prototype therefore does not guess or label a missing value as “not accessible”. Future work could use verified venue information or Google Places accessibility fields, while clearly distinguishing **reported accessible**, **reported not accessible** and **information unavailable**.
+- **Opening hours:** Historic markers and outdoor sites may not have opening hours, while operating venues can change their hours for holidays, events or renovations. Google Places could supply current hours, but requires a separately managed API key, billing and attribution. Users are directed to official sources and Google Maps to verify before travelling.
+- **Walking routes:** Without a configured OneMap token, distance and time use straight-line estimates rather than turn-by-turn, step-free routing. Even OneMap walking estimates do not guarantee a wheelchair-accessible path.
+- **Heritage photographs:** The NHB dataset generally supplies one photograph per place. Additional gallery images would require separate licensing and place-by-place verification.
+- **Coverage and freshness:** The app reflects the included government-data snapshot. A place may be temporarily closed, under renovation or otherwise inaccessible after the dataset was published.
+- **AI explanations:** The cultural guide is instructed to use only supplied official context, but generated wording can still be incomplete or inaccurate. Official source links remain the authority.
+- **Prototype scope:** Accounts, saved outings, visited-place collections, real-time crowd information and live location tracking are deliberately excluded.
+"""
+)
+
+st.info(
+    "Future priority: add verified visit-planning information only when its source, update date "
+    "and unknown values can be shown transparently."
 )
