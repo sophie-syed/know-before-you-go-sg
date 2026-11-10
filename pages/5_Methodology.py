@@ -120,49 +120,36 @@ st.info(
 
 st.subheader("Assignment requirements demonstrated")
 st.caption("Use this table as a quick guide to where each capstone requirement is demonstrated.")
-st.dataframe(
-    [
-        {
-            "Requirement": "Two complete use cases",
-            "How this app demonstrates it": "Personalised outing planning and grounded exploration of an individual heritage place.",
-            "Where to see it": "Plan My Outing; Explore Heritage Places",
-        },
-        {
-            "Requirement": "Official, publicly accessible information",
-            "How this app demonstrates it": "Uses NHB National Monuments and Historic Sites datasets, Roots.gov.sg records and optional SLA OneMap routing.",
-            "Where to see it": "Place cards, source links, About Us",
-        },
-        {
-            "Requirement": "Non-identifying personalisation",
-            "How this app demonstrates it": "Adapts routes using area, time, walking comfort, interests, audience and guide style without requesting names or sensitive data.",
-            "Where to see it": "Plan My Outing form",
-        },
-        {
-            "Requirement": "Interactive explanations and follow-ups",
-            "How this app demonstrates it": "Creates route stories and answers suggested or natural-language cultural questions using curated official evidence.",
-            "Where to see it": "Route Story tab; Ask the Cultural Guide",
-        },
-        {
-            "Requirement": "Effective presentation formats",
-            "How this app demonstrates it": "Uses forms, summary metrics, itinerary tables, maps, photographs, stop cards, downloadable guides and Google Maps hand-off.",
-            "Where to see it": "Generated outing; heritage place records",
-        },
-        {
-            "Requirement": "About Us and Methodology documentation",
-            "How this app demonstrates it": "Documents scope, objectives, features, data sources, implementation, limitations and one process diagram per use case.",
-            "Where to see it": "About Us; Methodology",
-        },
-        {
-            "Requirement": "Deployment and safeguards",
-            "How this app demonstrates it": "Runs on Streamlit Community Cloud with password protection and the required educational-prototype disclaimer.",
-            "Where to see it": "Live app entry page",
-        },
-    ],
-    hide_index=True,
-    width="stretch",
-    column_config={
-        "Requirement": st.column_config.TextColumn(width="medium"),
-        "How this app demonstrates it": st.column_config.TextColumn(width="large"),
-        "Where to see it": st.column_config.TextColumn(width="medium"),
-    },
+st.markdown(
+    """
+    <style>
+    .requirements-wrap {overflow-x:auto; margin:.75rem 0 1.5rem; border:1.5px solid #B8D5C6; border-radius:18px;}
+    .requirements-table {width:100%; border-collapse:collapse; table-layout:fixed; background:rgba(255,255,255,.45);}
+    .requirements-table th,.requirements-table td {padding:.85rem .9rem; border-bottom:1px solid #D7E1DA; border-right:1px solid #D7E1DA; vertical-align:top; text-align:left; white-space:normal; overflow-wrap:anywhere; line-height:1.45;}
+    .requirements-table th {background:#F1F5EC; color:#58716B; font-weight:800;}
+    .requirements-table th:nth-child(1) {width:25%;}
+    .requirements-table th:nth-child(2) {width:48%;}
+    .requirements-table th:nth-child(3) {width:27%;}
+    .requirements-table td:first-child {font-weight:750; color:#183F3A;}
+    .requirements-table tr:last-child td {border-bottom:0;}
+    .requirements-table th:last-child,.requirements-table td:last-child {border-right:0;}
+    @media (max-width:720px) {
+      .requirements-table {min-width:720px; font-size:.92rem;}
+      .requirements-table th,.requirements-table td {padding:.7rem;}
+    }
+    </style>
+    <div class="requirements-wrap"><table class="requirements-table">
+      <thead><tr><th>Requirement</th><th>How this app demonstrates it</th><th>Where to see it</th></tr></thead>
+      <tbody>
+        <tr><td>Two complete use cases</td><td>Personalised outing planning and grounded exploration of an individual heritage place.</td><td>Plan My Outing; Explore Heritage Places</td></tr>
+        <tr><td>Official, publicly accessible information</td><td>Uses NHB National Monuments and Historic Sites datasets, Roots.gov.sg records and optional SLA OneMap routing.</td><td>Place cards, source links, About Us</td></tr>
+        <tr><td>Non-identifying personalisation</td><td>Adapts routes using area, time, walking comfort, interests, audience and guide style without requesting names or sensitive data.</td><td>Plan My Outing form</td></tr>
+        <tr><td>Interactive explanations and follow-ups</td><td>Creates route stories and answers suggested or natural-language cultural questions using curated official evidence.</td><td>Route Story tab; Ask the Cultural Guide</td></tr>
+        <tr><td>Effective presentation formats</td><td>Uses forms, summary metrics, itinerary tables, maps, photographs, stop cards, downloadable guides and Google Maps hand-off.</td><td>Generated outing; heritage place records</td></tr>
+        <tr><td>About Us and Methodology documentation</td><td>Documents scope, objectives, features, data sources, implementation, limitations and one process diagram per use case.</td><td>About Us; Methodology</td></tr>
+        <tr><td>Deployment and safeguards</td><td>Runs on Streamlit Community Cloud with password protection and the required educational-prototype disclaimer.</td><td>Live app entry page</td></tr>
+      </tbody>
+    </table></div>
+    """,
+    unsafe_allow_html=True,
 )
