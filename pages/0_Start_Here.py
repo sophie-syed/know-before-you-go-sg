@@ -65,7 +65,8 @@ with left:
     )
 
 with right:
-    st.markdown("### Passport collection")
+    st.markdown("### Heritage places available")
+    st.caption("Official places the app can search and recommend in your outing.")
     st.metric("Official heritage places", f"{len(places)}")
     st.metric("National monuments", sum(place.place_type == "National monument" for place in places))
     st.metric("Historic sites", sum(place.place_type == "Historic site" for place in places))
