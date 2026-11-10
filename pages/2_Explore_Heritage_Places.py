@@ -8,8 +8,8 @@ from kbyg.ui import hero, place_card, place_map, setup_page
 
 setup_page("Explore Heritage Places", "🔎")
 hero(
-    "Ask Singapore’s cultural guide",
-    "Choose an official heritage place, read its story and ask your own questions. The guide answers from a curated government evidence layer—not the open internet.",
+    "Ask our heritage guide",
+    "Choose a Singapore heritage place, discover its story and ask the questions you are curious about.",
 )
 
 places = load_places()
@@ -63,8 +63,9 @@ with st.expander("Browse these places on the map", expanded=False):
 st.subheader(f"2. Ask the cultural guide about {place.name}")
 st.write(
     "Ask what makes it significant, what to notice when you visit, or how it connects "
-    "to Singapore’s communities. Answers are restricted to the curated official evidence supplied to the guide."
+    "to Singapore’s communities."
 )
+st.caption("Answers are grounded in the official government heritage sources linked on this page.")
 suggestions = [
     "Why does this place matter?",
     "Explain this to a 10-year-old.",
