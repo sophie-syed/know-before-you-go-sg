@@ -2,14 +2,24 @@ from __future__ import annotations
 
 import html
 import re
+from pathlib import Path
 from urllib.parse import quote_plus
 
 import pandas as pd
-import pydeck as pdk
 import requests
 import streamlit as st
 
 from kbyg.core import Place, PlannedRoute
+
+
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+CURATED_PHOTOS = {
+    "Former Nagore Dargah": {
+        "path": STATIC_DIR / "former-nagore-dargah.jpg",
+        "caption": "Former Nagore Dargah · Photo: Philip Nalangan (CC BY 4.0)",
+        "source": "https://commons.wikimedia.org/wiki/File:Nagore_Dargah_Singapore.jpg",
+    }
+}
 
 
 REQUIRED_DISCLAIMER = """IMPORTANT NOTICE: This web application is a prototype developed for educational purposes only. The information provided here is NOT intended for real-world usage and should not be relied upon for making any decisions, especially those related to financial, legal, or healthcare matters.
@@ -129,74 +139,18 @@ def place_map(places: list[Place] | tuple[Place, ...], height: int = 430) -> Non
             for number, place in enumerate(places, start=1)
         ]
     )
-    detailed = len(frame) <= 12
-    offset = 0.000055 if detailed else 0.000035
-    frame["petal_top_lat"] = frame["lat"] + offset
-    frame["petal_bottom_lat"] = frame["lat"] - offset * 0.72
-    frame["petal_left_lon"] = frame["lon"] - offset
-    frame["petal_right_lon"] = frame["lon"] + offset
-    petal_size = 9 if detailed else 5
-    petal_positions = [
-        "[lon, petal_top_lat]",
-        "[petal_left_lon, lat]",
-        "[petal_right_lon, lat]",
-        "[petal_left_lon, petal_bottom_lat]",
-        "[petal_right_lon, petal_bottom_lat]",
-    ]
-    orchid_layers = [
-        pdk.Layer(
-            "ScatterplotLayer",
-            data=frame,
-            get_position=position,
-            get_fill_color=[238, 125, 174, 245],
-            get_line_color=[24, 63, 58, 255],
-            stroked=True,
-            line_width_min_pixels=1,
-            radius_units="pixels",
-            get_radius=petal_size,
-            pickable=False,
+    if len(frame) <= 12:
+        legend = "".join(
+            f'<span class="passport-chip">🌺 {html.escape(row.stop)} · {html.escape(row.name)}</span>'
+            for row in frame.itertuples(index=False)
         )
-        for position in petal_positions
-    ]
-    orchid_layers.append(
-        pdk.Layer(
-            "ScatterplotLayer",
-            data=frame,
-            get_position="[lon, lat]",
-            get_fill_color=[245, 196, 81, 255],
-            get_line_color=[24, 63, 58, 255],
-            stroked=True,
-            line_width_min_pixels=1,
-            radius_units="pixels",
-            get_radius=8 if detailed else 4,
-            pickable=True,
-        )
-    )
-    number_layer = pdk.Layer(
-        "TextLayer",
-        data=frame,
-        get_position="[lon, lat]",
-        get_text="stop",
-        get_color=[24, 63, 58, 255],
-        get_size=12,
-        get_pixel_offset=[0, -2],
-        get_alignment_baseline="center",
-        get_text_anchor="middle",
-        font_weight=700,
-        pickable=False,
-    )
-    st.pydeck_chart(
-        pdk.Deck(
-            map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-            initial_view_state=pdk.ViewState(
-                latitude=float(frame["lat"].mean()),
-                longitude=float(frame["lon"].mean()),
-                zoom=14.4 if len(frame) > 1 else 15.5,
-                pitch=0,
-            ),
-            layers=orchid_layers + ([number_layer] if detailed else []),
-            tooltip={"html": "<b>Stop {stop}: {name}</b><br/>{type}", "style": {"backgroundColor": "#183F3A"}},
-        ),
+        st.markdown(f'<div style="margin:.25rem 0 .7rem">{legend}</div>', unsafe_allow_html=True)
+    st.map(
+        frame,
+        latitude="lat",
+        longitude="lon",
+        size=18 if len(frame) <= 12 else 8,
+        color="#E876A7",
         height=height,
     )
 
@@ -410,8 +364,12 @@ def place_card(place: Place, number: int | None = None) -> None:
         st.link_button("Find this stop in Google Maps ↗", google_maps_place_url(place))
         st.link_button("See the surroundings in Street View ↗", google_street_view_url(place))
     with cols[1]:
-        photo = _download_photo(place.photo_url) or _official_page_photo(place.official_url)
-        if photo:
+        curated = CURATED_PHOTOS.get(place.name)
+        photo = None if curated else (_download_photo(place.photo_url) or _official_page_photo(place.official_url))
+        if curated:
+            st.image(str(curated["path"]), caption=str(curated["caption"]), width="stretch")
+            st.link_button("Photo source and licence ↗", str(curated["source"]))
+        elif photo:
             st.image(photo, caption=f"{place.name} · National Heritage Board", width="stretch")
         else:
             commons_photo, licence, commons_url = _commons_photo(place.name)
