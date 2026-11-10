@@ -1,9 +1,11 @@
+import random
+
 import pandas as pd
 import streamlit as st
 
 from kbyg.ai import ai_available, ask_grounded_guide
 from kbyg.core import load_places, place_context
-from kbyg.ui import hero, place_card, place_map, setup_page
+from kbyg.ui import CURATED_PHOTOS, hero, place_card, place_map, setup_page
 
 
 setup_page("Explore Heritage Places", "🔎")
@@ -17,15 +19,15 @@ st.markdown(
     """
     <div class="passport-panel">
     <b>How to use this page</b><br>
-    <b>1.</b> Search by a place, neighbourhood or theme and choose a heritage site.<br>
-    <b>2.</b> Ask a suggested question or type one naturally in your own words.<br>
-    <b>3.</b> Read the answer alongside the official description, photograph and source link.
+    Find a place by searching—or let us surprise you with one.<br>
+    Ask a suggested question or type one naturally in your own words.<br>
+    Then read the answer alongside its official description, photograph and source link.
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-st.subheader("1. Find a heritage place")
+st.subheader("Step 1 · Find a place you’d like to know about")
 types = st.multiselect(
     "Place type",
     ["National monument", "Historic site"],
@@ -49,18 +51,36 @@ if not filtered:
     st.stop()
 
 st.write(f"Showing **{len(filtered)}** official heritage places.")
+
+photo_ready = [place for place in filtered if place.name in CURATED_PHOTOS]
+if st.button(
+    "✨ Surprise me with a place",
+    help="Choose a heritage place with a verified photograph for you to discover.",
+    disabled=not photo_ready,
+):
+    current_name = st.session_state.get("explore_selected_name", "")
+    alternatives = [place for place in photo_ready if place.name != current_name] or photo_ready
+    st.session_state["explore_selected_name"] = random.choice(alternatives).name
+
+preferred_name = st.session_state.get("explore_selected_name")
+default_index = next(
+    (index for index, item in enumerate(filtered) if item.name == preferred_name),
+    0,
+)
 selected_name = st.selectbox(
     "Choose a place to explore",
     [place.name for place in filtered],
+    index=default_index,
     help="The map helps you see where the filtered places are; use this list to open one.",
 )
+st.session_state["explore_selected_name"] = selected_name
 place = next(place for place in filtered if place.name == selected_name)
 
 with st.expander("Browse these places on the map", expanded=False):
     st.caption("Use the filters above to narrow the map, then choose a place from the list.")
     place_map(filtered)
 
-st.subheader(f"2. Ask the cultural guide about {place.name}")
+st.subheader(f"Step 2 · Ask the cultural guide about {place.name}")
 st.write(
     "Ask what makes it significant, what to notice when you visit, or how it connects "
     "to Singapore’s communities."
@@ -106,7 +126,7 @@ if (
 ):
     st.success(st.session_state["place_answer"])
 
-st.subheader(f"3. Explore the official record for {place.name}")
+st.subheader(f"Step 3 · Discover {place.name}")
 st.caption("See the government dataset summary, verified photograph where available, visit prompt and official source.")
 place_card(place)
 

@@ -14,6 +14,11 @@ from kbyg.core import Place, PlannedRoute, visit_status
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 CURATED_PHOTOS = {
+    "38 Oxley Road": {
+        "path": STATIC_DIR / "38-oxley-road.jpg",
+        "caption": "38 Oxley Road · Photo: Bahnfrend (CC BY-SA 4.0)",
+        "source": "https://commons.wikimedia.org/wiki/File:38_Oxley_Road,_2023_(01).jpg",
+    },
     "Former Nagore Dargah": {
         "path": STATIC_DIR / "former-nagore-dargah.jpg",
         "caption": "Former Nagore Dargah · Photo: Philip Nalangan (CC BY 4.0)",

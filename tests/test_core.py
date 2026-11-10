@@ -18,6 +18,11 @@ class CoreTests(unittest.TestCase):
             {"National monument", "Historic site"},
         )
 
+    def test_damaged_apostrophes_are_repaired(self):
+        self.assertFalse(any("�" in place.description for place in self.places))
+        oxley = next(place for place in self.places if place.name == "38 Oxley Road")
+        self.assertIn("Singapore’s transition", oxley.description)
+
     def test_haversine_zero(self):
         point = STARTING_AREAS["Telok Ayer"]
         self.assertAlmostEqual(haversine_km(point, point), 0.0)

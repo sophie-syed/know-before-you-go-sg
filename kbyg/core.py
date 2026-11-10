@@ -207,7 +207,10 @@ class PlannedRoute:
 def _clean(value: object) -> str:
     if value is None:
         return ""
-    return re.sub(r"\s+", " ", str(value)).strip()
+    # The government snapshots contain a small number of damaged curly apostrophes
+    # represented by the Unicode replacement character (for example, Singapore�s).
+    repaired = str(value).replace("\ufffd", "’")
+    return re.sub(r"\s+", " ", repaired).strip()
 
 
 def _address(properties: dict) -> str:
