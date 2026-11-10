@@ -119,14 +119,50 @@ st.info(
 )
 
 st.subheader("Assignment requirements demonstrated")
-st.markdown(
-    """
-- **Two complete use cases:** personalised outing planning and grounded exploration of an individual heritage place.
-- **Official, publicly accessible information:** NHB National Monuments and Historic Sites datasets, Roots.gov.sg records and optional SLA OneMap routing.
-- **Non-identifying personalisation:** area, available time, walking comfort, interests, audience and guide style—without collecting names or sensitive data.
-- **Interactive understanding:** automatic route explanations, place-level cultural questions, follow-up prompts and official source links.
-- **Effective presentation:** forms, summary metrics, itinerary tables, maps, photographs, expandable stop cards, downloadable outings and Google Maps hand-off.
-- **Required documentation:** an About Us page covering scope, objectives, features and data sources, plus this Methodology page with implementation detail and one flowchart for each use case.
-- **Deployment and safeguards:** a password-protected Streamlit Community Cloud app with the required educational-prototype disclaimer on the main page.
-"""
+st.caption("Use this table as a quick guide to where each capstone requirement is demonstrated.")
+st.dataframe(
+    [
+        {
+            "Requirement": "Two complete use cases",
+            "How this app demonstrates it": "Personalised outing planning and grounded exploration of an individual heritage place.",
+            "Where to see it": "Plan My Outing; Explore Heritage Places",
+        },
+        {
+            "Requirement": "Official, publicly accessible information",
+            "How this app demonstrates it": "Uses NHB National Monuments and Historic Sites datasets, Roots.gov.sg records and optional SLA OneMap routing.",
+            "Where to see it": "Place cards, source links, About Us",
+        },
+        {
+            "Requirement": "Non-identifying personalisation",
+            "How this app demonstrates it": "Adapts routes using area, time, walking comfort, interests, audience and guide style without requesting names or sensitive data.",
+            "Where to see it": "Plan My Outing form",
+        },
+        {
+            "Requirement": "Interactive explanations and follow-ups",
+            "How this app demonstrates it": "Creates route stories and answers suggested or natural-language cultural questions using curated official evidence.",
+            "Where to see it": "Route Story tab; Ask the Cultural Guide",
+        },
+        {
+            "Requirement": "Effective presentation formats",
+            "How this app demonstrates it": "Uses forms, summary metrics, itinerary tables, maps, photographs, stop cards, downloadable guides and Google Maps hand-off.",
+            "Where to see it": "Generated outing; heritage place records",
+        },
+        {
+            "Requirement": "About Us and Methodology documentation",
+            "How this app demonstrates it": "Documents scope, objectives, features, data sources, implementation, limitations and one process diagram per use case.",
+            "Where to see it": "About Us; Methodology",
+        },
+        {
+            "Requirement": "Deployment and safeguards",
+            "How this app demonstrates it": "Runs on Streamlit Community Cloud with password protection and the required educational-prototype disclaimer.",
+            "Where to see it": "Live app entry page",
+        },
+    ],
+    hide_index=True,
+    width="stretch",
+    column_config={
+        "Requirement": st.column_config.TextColumn(width="medium"),
+        "How this app demonstrates it": st.column_config.TextColumn(width="large"),
+        "Where to see it": st.column_config.TextColumn(width="medium"),
+    },
 )
