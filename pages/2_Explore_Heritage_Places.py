@@ -8,20 +8,6 @@ from kbyg.core import load_places, place_context
 from kbyg.ui import hero, place_card, place_map, setup_page
 
 
-# A deliberately varied discovery set: faiths, communities, civic life, arts,
-# hospitality and public service. Session history prevents repetitive surprises.
-FEATURED_DISCOVERY_NAMES = {
-    "38 Oxley Road",
-    "Al-Abrar Mosque",
-    "Former Nagore Dargah",
-    "Jamae Mosque",
-    "Pondok Peranakan Gelam Club",
-    "Sri Mariamman Temple",
-    "Sultan Mosque",
-    "Thian Hock Keng",
-}
-
-
 setup_page("Explore Heritage Places", "🔎")
 hero(
     "Ask our heritage guide",
@@ -66,7 +52,7 @@ if not filtered:
 
 st.write(f"Showing **{len(filtered)}** official heritage places.")
 
-discovery_places = [place for place in filtered if place.name in FEATURED_DISCOVERY_NAMES]
+discovery_places = filtered
 if st.button(
     "✨ Surprise me — spark my curiosity",
     type="primary",
@@ -86,8 +72,8 @@ if st.button(
     st.session_state["last_surprise_name"] = surprise.name
 
 st.caption(
-    "Not sure where to begin? Surprise Me rotates through a varied collection of Singapore "
-    "stories without repeating one until you have explored the full set."
+    f"Not sure where to begin? Surprise Me can draw from all **{len(discovery_places)}** places "
+    "currently shown by your filters, without repeating one until you have explored that full set."
 )
 
 preferred_name = st.session_state.get("explore_selected_name")
