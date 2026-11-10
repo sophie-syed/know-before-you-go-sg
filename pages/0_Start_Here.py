@@ -1,16 +1,15 @@
 import streamlit as st
 
 from kbyg.core import load_places
-from kbyg.ui import hero, required_disclaimer, require_password, setup_page
+from kbyg.ui import hero, required_disclaimer, setup_page
 
 
 setup_page("Start Here")
-require_password()
 places = load_places()
 
 hero(
     "Know Before You Go SG",
-    "Turn official Singapore heritage data into a short outing that fits your time, interests and walking comfort.",
+    "Choose whether to plan a complete outing or explore one place, using official Singapore heritage information.",
 )
 
 required_disclaimer()
@@ -20,28 +19,22 @@ st.write("Choose either card—the whole card is clickable.")
 
 journey_one, journey_two = st.columns(2)
 with journey_one:
-    st.markdown(
-        """
-        <a class="journey-card" href="./plan-my-outing" target="_self">
-          <strong>🗺️ I want a ready-made outing</strong>
-          <span>Choose your area, available time, walking distance and interests. Get a suggested route with photographs, stories and navigation links.</span>
-          <em>Plan my outing →</em>
-        </a>
-        """,
-        unsafe_allow_html=True,
-    )
+    with st.container(key="journey_plan"):
+        if st.button(
+            "🗺️  I want a ready-made outing\n\nChoose your area, available time, walking distance "
+            "and interests. Get a suggested route with photographs, stories and navigation links.\n\nPlan my outing →",
+            width="stretch",
+        ):
+            st.switch_page("pages/1_Plan_My_Outing.py")
 
 with journey_two:
-    st.markdown(
-        """
-        <a class="journey-card" href="./explore-heritage-places" target="_self">
-          <strong>🔎 I want to discover a particular place</strong>
-          <span>Search the heritage map, open a place card, view photographs and ask the cultural guide follow-up questions.</span>
-          <em>Explore heritage places →</em>
-        </a>
-        """,
-        unsafe_allow_html=True,
-    )
+    with st.container(key="journey_explore"):
+        if st.button(
+            "🔎  I want to discover a particular place\n\nSearch the heritage map, open a place card, view "
+            "photographs and ask the cultural guide follow-up questions.\n\nExplore heritage places →",
+            width="stretch",
+        ):
+            st.switch_page("pages/2_Explore_Heritage_Places.py")
 
 with st.expander("What is each page for?"):
     st.markdown(
@@ -50,7 +43,7 @@ with st.expander("What is each page for?"):
 - **Plan My Outing:** Creates a personalised, downloadable heritage trail.
 - **Explore Heritage Places:** Lets you browse the national map, view place photographs and ask grounded cultural-guide questions.
 - **About Us:** Explains the problem, project objectives, features, official data sources and limitations.
-- **How It Works:** Shows how the website was built, how the route logic and LLM work, and what the prototype cannot yet do.
+- **Methodology:** Shows how the website was built, how the route logic and LLM work, and what the prototype cannot yet do.
 """
     )
 

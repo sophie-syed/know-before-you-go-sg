@@ -1,13 +1,12 @@
 import streamlit as st
 
-from kbyg.ui import hero, require_password, setup_page
+from kbyg.ui import hero, setup_page
 
 
-setup_page("How It Works", "🧪")
-require_password()
+setup_page("Methodology", "🧪")
 hero(
     "How this website works",
-    "How official data becomes a personalised outing, how the AI guide is kept grounded, and what the prototype cannot yet do.",
+    "Follow how official data becomes a personalised outing, how the AI guide is kept grounded, and what the prototype cannot yet do.",
 )
 
 st.subheader("How it was built")
@@ -40,14 +39,15 @@ st.subheader("Use case 1: Personalised outing planner")
 st.graphviz_chart(
     """
     digraph Planner {
-      rankdir=TB;
-      node [shape=box, style="rounded,filled", fillcolor="#F4EBDD", color="#99643D"];
-      input [label="Choose area, time, walking limit and interests"];
-      nearby [label="Find official places within a bounded radius"];
-      score [label="Score interest matches in official text"];
-      route [label="Order nearby stops and enforce limits"];
-      result [label="Show map, itinerary, estimates and source links"];
-      input -> nearby -> score -> route -> result;
+      rankdir=LR;
+      graph [pad="0.1", nodesep="0.22", ranksep="0.32", bgcolor="transparent"];
+      node [shape=box, style="rounded,filled", fillcolor="#F4EBDD", color="#99643D", fontsize=10, margin="0.10,0.07"];
+      edge [color="#99643D", arrowsize=0.65];
+      input [label="Choose area, time,\nwalking limit and interests"];
+      match [label="Match nearby places\nusing official NHB text"];
+      route [label="Order stops within\ntime and distance limits"];
+      result [label="Show story, itinerary,\nstops and route map"];
+      input -> match -> route -> result;
     }
     """,
     width="stretch",
@@ -57,14 +57,15 @@ st.subheader("Use case 2: Grounded cultural guide")
 st.graphviz_chart(
     """
     digraph Guide {
-      rankdir=TB;
-      node [shape=box, style="rounded,filled", fillcolor="#E8F0EC", color="#24483F"];
-      select [label="Select a place or generated route"];
-      retrieve [label="Retrieve matching official descriptions and URLs"];
-      ask [label="Send bounded context and question to the LLM"];
-      guard [label="Require unknowns to be stated, not invented"];
-      answer [label="Return a clear answer with an official source link"];
-      select -> retrieve -> ask -> guard -> answer;
+      rankdir=LR;
+      graph [pad="0.1", nodesep="0.22", ranksep="0.32", bgcolor="transparent"];
+      node [shape=box, style="rounded,filled", fillcolor="#E8F0EC", color="#24483F", fontsize=10, margin="0.10,0.07"];
+      edge [color="#24483F", arrowsize=0.65];
+      select [label="Select a place\nor generated route"];
+      retrieve [label="Retrieve matching\nofficial context"];
+      ask [label="Ask LLM with\ngrounding guardrails"];
+      answer [label="Return explanation\nand official link"];
+      select -> retrieve -> ask -> answer;
     }
     """,
     width="stretch",
@@ -114,4 +115,17 @@ st.markdown(
 st.info(
     "Future priority: add verified visit-planning information only when its source, update date "
     "and unknown values can be shown transparently."
+)
+
+st.subheader("Assignment requirements demonstrated")
+st.markdown(
+    """
+- **Two complete use cases:** personalised outing planning and grounded exploration of an individual heritage place.
+- **Official, publicly accessible information:** NHB National Monuments and Historic Sites datasets, Roots.gov.sg records and optional SLA OneMap routing.
+- **Non-identifying personalisation:** area, available time, walking comfort, interests, audience and guide style—without collecting names or sensitive data.
+- **Interactive understanding:** automatic route explanations, place-level cultural questions, follow-up prompts and official source links.
+- **Effective presentation:** forms, summary metrics, itinerary tables, maps, photographs, expandable stop cards, downloadable outings and Google Maps hand-off.
+- **Required documentation:** an About Us page covering scope, objectives, features and data sources, plus this Methodology page with implementation detail and one flowchart for each use case.
+- **Deployment and safeguards:** a password-protected Streamlit Community Cloud app with the required educational-prototype disclaimer on the main page.
+"""
 )

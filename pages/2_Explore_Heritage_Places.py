@@ -3,14 +3,13 @@ import streamlit as st
 
 from kbyg.ai import ai_available, ask_grounded_guide
 from kbyg.core import load_places, place_context
-from kbyg.ui import hero, place_card, place_map, require_password, setup_page
+from kbyg.ui import hero, place_card, place_map, setup_page
 
 
 setup_page("Explore Heritage Places", "🔎")
-require_password()
 hero(
     "Explore Singapore’s heritage places",
-    "Discover official sites on the national map, choose one that catches your eye, and ask a grounded cultural guide why it matters.",
+    "Search or browse the national map, choose a place that catches your eye, then view its photograph and ask the cultural guide why it matters.",
 )
 
 places = load_places()

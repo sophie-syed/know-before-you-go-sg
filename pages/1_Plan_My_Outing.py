@@ -12,14 +12,13 @@ from kbyg.core import (
     route_context,
 )
 from kbyg.onemap import onemap_available, walking_route
-from kbyg.ui import hero, place_card, place_map, require_password, route_table, setup_page
+from kbyg.ui import hero, place_card, place_map, route_table, setup_page
 
 
 setup_page("Plan My Outing", "🗺️")
-require_password()
 hero(
     "Create my heritage trail",
-    "Choose your neighbourhood, available time and curiosities. We’ll turn them into a pocket-sized Singapore adventure.",
+    "Choose your neighbourhood, available time and curiosities. We’ll turn them into a pocket-sized Singapore adventure you can open in Google Maps and carry on your phone.",
 )
 
 places = load_places()

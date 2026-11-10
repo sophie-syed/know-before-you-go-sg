@@ -1,14 +1,13 @@
 import streamlit as st
 
 from kbyg.core import load_places
-from kbyg.ui import hero, require_password, setup_page
+from kbyg.ui import hero, setup_page
 
 
 setup_page("About Us", "ℹ️")
-require_password()
 hero(
     "About Know Before You Go SG",
-    "A capstone prototype that helps residents turn official heritage data into manageable, meaningful outings.",
+    "See the problem this capstone addresses, what the prototype offers residents, and which official sources it uses.",
 )
 
 places = load_places()
@@ -55,7 +54,8 @@ st.subheader("Limitations")
 st.warning(
     "The prototype does not verify live access, opening hours, admission charges, closures or "
     "wheelchair accessibility. Straight-line estimates are not turn-by-turn navigation. Some "
-    "historic-site markers commemorate places whose original buildings no longer exist. Users "
-    "should check the linked official page before travelling."
+    "historic-site markers commemorate former places rather than surviving buildings. Where the "
+    "official NHB record explicitly says a structure was demolished, destroyed or relocated, the "
+    "place card now flags that before a visit. Ambiguous records are not guessed."
 )
 

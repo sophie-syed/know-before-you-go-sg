@@ -1,7 +1,10 @@
 import streamlit as st
 
+from kbyg.ui import require_password
+
 
 st.set_page_config(page_title="Know Before You Go SG", page_icon="🌺", layout="wide")
+require_password()
 
 navigation = st.navigation(
     [
@@ -14,7 +17,7 @@ navigation = st.navigation(
             url_path="explore-heritage-places",
         ),
         st.Page("pages/4_About_Us.py", title="About Us", icon="🌺", url_path="about-us"),
-        st.Page("pages/5_Methodology.py", title="How It Works", icon="📚", url_path="methodology"),
+        st.Page("pages/5_Methodology.py", title="Methodology", icon="📚", url_path="methodology"),
     ]
 )
 navigation.run()

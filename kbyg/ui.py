@@ -9,7 +9,7 @@ import pandas as pd
 import requests
 import streamlit as st
 
-from kbyg.core import Place, PlannedRoute
+from kbyg.core import Place, PlannedRoute, visit_status
 
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
@@ -83,6 +83,9 @@ def setup_page(title: str, icon: str = "🧭") -> None:
         .journey-card strong {display:block; margin-bottom:.65rem; font-family:"Avenir Next Rounded", "Arial Rounded MT Bold", "Avenir Next", sans-serif; font-size:1.3rem; color:var(--kbyg-ink);}
         .journey-card span {display:block; line-height:1.55; color:var(--kbyg-ink);}
         .journey-card em {display:block; margin-top:1rem; color:#B43F32; font-style:normal; font-weight:800;}
+        .st-key-journey_plan button, .st-key-journey_explore button {min-height:190px; padding:1.35rem 1.45rem !important; border:2px solid var(--kbyg-ink) !important; border-radius:22px !important; background:rgba(255,255,255,.82) !important; color:var(--kbyg-ink) !important; box-shadow:7px 7px 0 var(--kbyg-mint) !important; white-space:pre-wrap; text-align:left; justify-content:flex-start; font-size:1rem; line-height:1.55;}
+        .st-key-journey_plan button p, .st-key-journey_explore button p {font-weight:650;}
+        .st-key-journey_plan button:hover, .st-key-journey_explore button:hover {transform:translate(3px,3px); box-shadow:4px 4px 0 var(--kbyg-sun) !important; background:#fffdf7 !important;}
         button[kind="primary"] {background:var(--kbyg-coral) !important; color:white !important;}
         [data-testid="stDataFrame"] {border-radius:18px; overflow:hidden; border:1.5px solid #CADBD1;}
         hr {border-color:#B8D5C6 !important;}
@@ -91,6 +94,7 @@ def setup_page(title: str, icon: str = "🧭") -> None:
             .hero:before {background:linear-gradient(180deg,rgba(255,249,237,.99) 0%,rgba(255,249,237,.94) 48%,rgba(255,249,237,.28) 78%,rgba(255,249,237,.05) 100%);}
             .hero-copy {max-width:100%;}
             .journey-card {min-height:auto; margin-bottom:1.5rem;}
+            .st-key-journey_plan button, .st-key-journey_explore button {min-height:150px; margin-bottom:.65rem;}
         }
         </style>
         """,
@@ -388,6 +392,11 @@ def place_card(place: Place, number: int | None = None) -> None:
     cols = st.columns([2, 1])
     with cols[0]:
         st.caption(place.place_type)
+        status = visit_status(place)
+        if status.startswith("Commemorative site"):
+            st.warning(f"**Before you go:** {status}")
+        elif status.startswith("Former location"):
+            st.info(f"**Before you go:** {status}")
         st.markdown(
             "".join(f'<span class="passport-chip">{html.escape(badge)}</span>' for badge in _heritage_badges(place)),
             unsafe_allow_html=True,

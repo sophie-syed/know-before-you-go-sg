@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from kbyg.core import STARTING_AREAS, haversine_km, load_places, plan_route
+from kbyg.core import STARTING_AREAS, haversine_km, load_places, plan_route, visit_status
 from kbyg.onemap import walking_route
 from kbyg.ui import REQUIRED_DISCLAIMER
 
@@ -53,6 +53,12 @@ class CoreTests(unittest.TestCase):
         self.assertIn("IMPORTANT NOTICE", REQUIRED_DISCLAIMER)
         self.assertIn("prototype developed for educational purposes only", REQUIRED_DISCLAIMER)
         self.assertIn("LLM may generate inaccurate or incorrect information", REQUIRED_DISCLAIMER)
+
+    def test_explicit_historic_site_statuses_are_distinguished(self):
+        by_name = {place.name: place for place in self.places}
+        self.assertTrue(visit_status(by_name["National Theatre"]).startswith("Commemorative site"))
+        self.assertTrue(visit_status(by_name["Pondok Peranakan Gelam Club"]).startswith("Former location"))
+        self.assertIn("No separate", visit_status(by_name["Al-Abrar Mosque"]))
 
     @patch("kbyg.onemap._secret", return_value="test-token")
     @patch("kbyg.onemap.requests.get")

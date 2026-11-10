@@ -132,6 +132,34 @@ class Place:
         }
 
 
+NO_LONGER_PRESENT_PLACES = {
+    "National Theatre",
+    "Syonan Jinja",
+}
+
+FORMER_LOCATION_PLACES = {
+    "Central Sikh Temple",
+    "Pondok Peranakan Gelam Club",
+    "Raffles Girls' School",
+    "Singapore Chinese Girls' School",
+}
+
+
+def visit_status(place: Place) -> str:
+    """Return a visit expectation only when the official record is explicit."""
+    if place.name in NO_LONGER_PRESENT_PLACES:
+        return (
+            "Commemorative site — original structure no longer present. "
+            "The official NHB description states that it was demolished or destroyed."
+        )
+    if place.name in FORMER_LOCATION_PLACES:
+        return (
+            "Former location or use. The official NHB record describes an organisation or "
+            "activity that has moved or ended here; it does not confirm which original structures remain."
+        )
+    return "No separate present-day physical-status statement is supplied in the dataset."
+
+
 @dataclass(frozen=True)
 class RouteStop:
     place: Place
@@ -353,6 +381,7 @@ def route_context(route: PlannedRoute) -> str:
             f"Type: {place.place_type}\n"
             f"Address: {place.address or 'Not supplied'}\n"
             f"Official description: {place.description or 'No description supplied'}\n"
+            f"Visit status: {visit_status(place)}\n"
             f"Official source: {place.official_url}\n"
             f"Supplemental official context: {supplemental}"
         )
@@ -368,6 +397,7 @@ def place_context(place: Place) -> str:
         f"Type: {place.place_type}\n"
         f"Address: {place.address or 'Not supplied'}\n"
         f"Official description: {place.description or 'No description supplied'}\n"
+        f"Visit status: {visit_status(place)}\n"
         f"Official source: {place.official_url}\n"
         f"Supplemental official context: {supplemental}"
     )
