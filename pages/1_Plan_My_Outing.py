@@ -244,7 +244,7 @@ if route:
                 with gallery_cols[index % len(gallery_cols)]:
                     st.image(photo, caption=caption, width="stretch")
                     if source:
-                        st.link_button("Official photo source ↗", source, width="stretch")
+                        st.link_button("Photo source and licence ↗", source, width="stretch")
 
         if not official_walking:
             st.caption(

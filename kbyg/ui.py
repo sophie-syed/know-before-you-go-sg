@@ -54,10 +54,23 @@ def place_photo(place: Place) -> tuple[str | bytes | None, str, str]:
     if curated:
         return str(curated["path"]), str(curated["caption"]), str(curated["source"])
 
-    official_photo_url = OFFICIAL_PHOTO_OVERRIDES.get(place.name, place.photo_url)
-    photo = _download_photo(official_photo_url) or _official_page_photo(
-        place.official_url, place.photo_url
-    )
+    official_override = OFFICIAL_PHOTO_OVERRIDES.get(place.name)
+    dataset_url_is_current = place.photo_url and "~/media/" not in place.photo_url
+    official_photo_url = official_override or (place.photo_url if dataset_url_is_current else "")
+    photo = _download_photo(official_photo_url) if official_photo_url else None
+    if photo:
+        return photo, f"{place.name} · National Heritage Board", place.official_url
+    photo, licence, source = _commons_photo(place.name)
+    if photo:
+        licence_note = f" ({licence})" if licence else ""
+        return photo, f"{place.name} · Wikimedia Commons{licence_note}", source
+    photo, licence, source = _wikipedia_photo(place.name)
+    if photo:
+        licence_note = f" ({licence})" if licence else ""
+        return photo, f"{place.name} · Wikimedia Commons{licence_note}", source
+    # Last attempt for places without a matching encyclopaedia article: inspect
+    # the official page for a migrated media address.
+    photo = _official_page_photo(place.official_url, place.photo_url)
     if photo:
         return photo, f"{place.name} · National Heritage Board", place.official_url
     return None, "", place.official_url
@@ -329,7 +342,13 @@ def _commons_photo(place_name: str) -> tuple[bytes | None, str, str]:
         pages = (response.json().get("query") or {}).get("pages") or {}
         if not pages:
             return None, "", ""
-        info = next(iter(pages.values())).get("imageinfo", [{}])[0]
+        result_page = next(iter(pages.values()))
+        expected_tokens = _matching_name_tokens(place_name)
+        result_tokens = _matching_name_tokens(result_page.get("title", ""))
+        required_overlap = min(2, len(expected_tokens), len(result_tokens))
+        if not required_overlap or len(expected_tokens & result_tokens) < required_overlap:
+            return None, "", ""
+        info = result_page.get("imageinfo", [{}])[0]
         image_url = info.get("thumburl") or info.get("url")
         if not image_url:
             return None, "", ""
@@ -343,9 +362,17 @@ def _commons_photo(place_name: str) -> tuple[bytes | None, str, str]:
         return None, "", ""
 
 
+def _matching_name_tokens(value: str) -> set[str]:
+    stop_words = {"the", "and", "of", "at", "former", "now", "building", "site", "singapore"}
+    return {
+        token for token in re.findall(r"[a-z0-9]+", value.casefold())
+        if len(token) > 2 and token not in stop_words
+    }
+
+
 @st.cache_data(show_spinner=False, ttl=604_800)
-def _wikipedia_photo(place_name: str) -> tuple[bytes | None, str]:
-    """Use a Wikipedia lead image only when the official and Commons searches fail."""
+def _wikipedia_photo(place_name: str) -> tuple[bytes | None, str, str]:
+    """Return a validated, reusable Commons image from a matching Wikipedia article."""
     try:
         response = requests.get(
             "https://en.wikipedia.org/w/api.php",
@@ -355,7 +382,7 @@ def _wikipedia_photo(place_name: str) -> tuple[bytes | None, str]:
                 "gsrsearch": f"{place_name} Singapore",
                 "gsrlimit": 1,
                 "prop": "pageimages|info",
-                "piprop": "thumbnail|original",
+                "piprop": "name|thumbnail|original",
                 "pithumbsize": 900,
                 "inprop": "url",
                 "format": "json",
@@ -366,17 +393,54 @@ def _wikipedia_photo(place_name: str) -> tuple[bytes | None, str]:
         response.raise_for_status()
         pages = (response.json().get("query") or {}).get("pages") or {}
         if not pages:
-            return None, ""
+            return None, "", ""
         page = next(iter(pages.values()))
-        image_url = (page.get("thumbnail") or {}).get("source") or (page.get("original") or {}).get("source")
+        expected_tokens = _matching_name_tokens(place_name)
+        page_tokens = _matching_name_tokens(page.get("title", ""))
+        required_overlap = min(2, len(expected_tokens), len(page_tokens))
+        if not required_overlap or len(expected_tokens & page_tokens) < required_overlap:
+            return None, "", ""
+
+        image_name = page.get("pageimage")
+        if not image_name:
+            return None, "", ""
+        if any(word in image_name.casefold() for word in ("logo", "icon", "seal", "coat_of_arms", "map")):
+            return None, "", ""
+        commons_response = requests.get(
+            "https://commons.wikimedia.org/w/api.php",
+            params={
+                "action": "query",
+                "titles": f"File:{image_name}",
+                "prop": "imageinfo",
+                "iiprop": "url|extmetadata",
+                "iiurlwidth": 900,
+                "format": "json",
+            },
+            headers={"User-Agent": "Know-Before-You-Go-SG/1.0 (educational prototype)"},
+            timeout=8,
+        )
+        commons_response.raise_for_status()
+        commons_pages = (commons_response.json().get("query") or {}).get("pages") or {}
+        if not commons_pages:
+            return None, "", ""
+        info = next(iter(commons_pages.values())).get("imageinfo", [{}])[0]
+        metadata = info.get("extmetadata") or {}
+        licence = re.sub(
+            r"<[^>]+>", "", (metadata.get("LicenseShortName") or {}).get("value", "")
+        ).strip()
+        if not licence:
+            return None, "", ""
+        image_url = info.get("thumburl") or info.get("url")
         if not image_url:
-            return None, ""
-        image_response = requests.get(image_url, timeout=8, headers={"User-Agent": "Know-Before-You-Go-SG/1.0"})
+            return None, "", ""
+        image_response = requests.get(
+            image_url, timeout=8, headers={"User-Agent": "Know-Before-You-Go-SG/1.0"}
+        )
         if not image_response.ok or not image_response.headers.get("content-type", "").startswith("image/"):
-            return None, ""
-        return image_response.content, page.get("fullurl", "")
+            return None, "", ""
+        return image_response.content, licence, info.get("descriptionurl", page.get("fullurl", ""))
     except (requests.RequestException, ValueError, KeyError, IndexError):
-        return None, ""
+        return None, "", ""
 
 
 def _heritage_badges(place: Place) -> list[str]:
