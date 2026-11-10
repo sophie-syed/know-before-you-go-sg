@@ -6,7 +6,6 @@ from pathlib import Path
 from urllib.parse import quote_plus
 
 import pandas as pd
-import pydeck as pdk
 import requests
 import streamlit as st
 
@@ -128,9 +127,9 @@ def required_disclaimer() -> None:
 def hero(title: str, subtitle: str) -> None:
     st.markdown(
         '<div class="hero">'
-        '<div class="hero-copy"><div class="hero-eyebrow">Singapore Heritage Passport · ❀</div>'
+        '<div class="hero-copy"><div class="hero-eyebrow">Your Singapore heritage outing · ❀</div>'
         f'<h1>{html.escape(title)}</h1><p>{html.escape(subtitle)}</p></div>'
-        '</div><div class="orchid-rule">❀ &nbsp; EXPLORE · NOTICE · COLLECT &nbsp; ❀</div>',
+        '</div><div class="orchid-rule">❀ &nbsp; DISCOVER · UNDERSTAND · EXPLORE &nbsp; ❀</div>',
         unsafe_allow_html=True,
     )
 
@@ -152,72 +151,23 @@ def place_map(places: list[Place] | tuple[Place, ...], height: int = 430) -> Non
         ]
     )
     if len(frame) <= 12:
-        frame["pin_tail"] = "▼"
+        route_colors = [
+            "#D94F3D", "#167F73", "#4F6FB3", "#B46A12", "#8A4F9E", "#347A3E",
+            "#C23D76", "#5B6670", "#A45628", "#376E8C", "#6D5A9C", "#7B6B12",
+        ]
+        frame["marker_color"] = route_colors[: len(frame)]
         legend = "".join(
-            f'<span class="passport-chip">🌺 {html.escape(row.stop)} · {html.escape(row.name)}</span>'
+            f'<span class="passport-chip"><b style="color:{row.marker_color};font-size:1.1rem">●</b> '
+            f'{html.escape(row.stop)} · {html.escape(row.name)}</span>'
             for row in frame.itertuples(index=False)
         )
         st.markdown(f'<div style="margin:.25rem 0 .7rem">{legend}</div>', unsafe_allow_html=True)
-        pin_tail_layer = pdk.Layer(
-            "TextLayer",
-            data=frame,
-            get_position="[lon, lat]",
-            get_text="pin_tail",
-            get_color=[232, 93, 74, 255],
-            get_size=29,
-            get_pixel_offset=[0, 16],
-            get_alignment_baseline="center",
-            get_text_anchor="middle",
-            pickable=False,
-        )
-        marker_layer = pdk.Layer(
-            "ScatterplotLayer",
-            data=frame,
-            get_position="[lon, lat]",
-            get_fill_color=[232, 93, 74, 255],
-            get_line_color=[24, 63, 58, 255],
-            get_radius=22,
-            radius_units="pixels",
-            stroked=True,
-            line_width_min_pixels=3,
-            pickable=True,
-        )
-        marker_center_layer = pdk.Layer(
-            "ScatterplotLayer",
-            data=frame,
-            get_position="[lon, lat]",
-            get_fill_color=[255, 249, 237, 255],
-            get_radius=15,
-            radius_units="pixels",
-            pickable=False,
-        )
-        number_layer = pdk.Layer(
-            "TextLayer",
-            data=frame,
-            get_position="[lon, lat]",
-            get_text="stop",
-            get_color=[24, 63, 58, 255],
-            get_size=16,
-            get_alignment_baseline="center",
-            get_text_anchor="middle",
-            font_weight=800,
-            pickable=False,
-        )
-        st.pydeck_chart(
-            pdk.Deck(
-                layers=[pin_tail_layer, marker_layer, marker_center_layer, number_layer],
-                map_provider="carto",
-                initial_view_state=pdk.ViewState(
-                    latitude=float(frame["lat"].mean()),
-                    longitude=float(frame["lon"].mean()),
-                    zoom=14.5 if len(frame) > 1 else 16,
-                    pitch=0,
-                ),
-                tooltip={
-                    "html": "<b>Stop {stop}: {name}</b><br/>{type}",
-                    "style": {"backgroundColor": "#183F3A", "color": "white"},
-                },
-            ),
+        st.map(
+            frame,
+            latitude="lat",
+            longitude="lon",
+            size=10,
+            color="marker_color",
             height=height,
         )
     else:
@@ -431,7 +381,7 @@ def google_street_view_url(place: Place) -> str:
 def place_card(place: Place, number: int | None = None) -> None:
     prefix = f"Stop {number}: " if number else ""
     st.markdown(
-        f'<div class="passport-kicker">Heritage passport · {html.escape(prefix.rstrip(": "))}</div>'
+        f'<div class="passport-kicker">Your outing · {html.escape(prefix.rstrip(": "))}</div>'
         f'<div class="stop-card"><h3>{html.escape(place.name)}</h3></div>',
         unsafe_allow_html=True,
     )

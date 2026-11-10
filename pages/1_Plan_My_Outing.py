@@ -194,10 +194,10 @@ if route:
             width="stretch",
         )
 
-    place_map([stop.place for stop in route.stops])
+    st.subheader("Your itinerary")
     st.dataframe(route_table(route), hide_index=True, width="stretch")
 
-    st.subheader("Your route story")
+    st.subheader("Why this route matters")
     if ai_available():
         if st.session_state.get("route_story_error"):
             st.warning("The personalised story could not load, so a shorter data-based summary is shown instead.")
@@ -219,3 +219,7 @@ if route:
     for number, stop in enumerate(route.stops, start=1):
         with st.expander(f"{number}. {stop.place.name}", expanded=True):
             place_card(stop.place, number)
+
+    st.subheader("Your route map")
+    st.caption("Match each numbered pin to the itinerary and stop cards above.")
+    place_map([stop.place for stop in route.stops])
