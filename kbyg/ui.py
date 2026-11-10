@@ -30,7 +30,6 @@ Always consult with qualified professionals for accurate and personalised advice
 
 
 def setup_page(title: str, icon: str = "🧭") -> None:
-    st.set_page_config(page_title=f"{title} | Know Before You Go SG", page_icon=icon, layout="wide")
     st.markdown(
         """
         <style>
@@ -73,6 +72,11 @@ def setup_page(title: str, icon: str = "🧭") -> None:
         div[data-testid="stMetric"] [data-testid="stMetricValue"] {color:var(--kbyg-jade); font-weight:800;}
         .stButton>button, .stDownloadButton>button, [data-testid="stLinkButton"] a {border-radius:999px !important; border:1.5px solid var(--kbyg-ink) !important; font-weight:750 !important; box-shadow:3px 3px 0 var(--kbyg-ink); transition:transform .12s ease, box-shadow .12s ease;}
         .stButton>button:hover, .stDownloadButton>button:hover, [data-testid="stLinkButton"] a:hover {transform:translate(2px,2px); box-shadow:1px 1px 0 var(--kbyg-ink);}
+        .journey-card {display:block; min-height:190px; padding:1.35rem 1.45rem; border:2px solid var(--kbyg-ink); border-radius:22px; background:rgba(255,255,255,.82); color:var(--kbyg-ink) !important; text-decoration:none !important; box-shadow:7px 7px 0 var(--kbyg-mint); transition:transform .12s ease, box-shadow .12s ease;}
+        .journey-card:hover {transform:translate(3px,3px); box-shadow:4px 4px 0 var(--kbyg-sun); background:#fffdf7;}
+        .journey-card strong {display:block; margin-bottom:.65rem; font-family:"Avenir Next Rounded", "Arial Rounded MT Bold", "Avenir Next", sans-serif; font-size:1.3rem; color:var(--kbyg-ink);}
+        .journey-card span {display:block; line-height:1.55; color:var(--kbyg-ink);}
+        .journey-card em {display:block; margin-top:1rem; color:#B43F32; font-style:normal; font-weight:800;}
         button[kind="primary"] {background:var(--kbyg-coral) !important; color:white !important;}
         [data-testid="stDataFrame"] {border-radius:18px; overflow:hidden; border:1.5px solid #CADBD1;}
         hr {border-color:#B8D5C6 !important;}
