@@ -77,6 +77,19 @@ OFFICIAL_PLACE_CONTEXT = {
         "shophouse row, while its interior also contains European Neoclassical elements. "
         "Official source: https://www.roots.gov.sg/places/places-landing/Places/national-monuments/al-abrar-mosque"
     ),
+    "Sultan Mosque": (
+        "Official NHB context: Sultan Mosque began as the royal mosque of Sultan Hussein Shah "
+        "of Johor. After the 1824 agreement that enabled the British trading port, land near "
+        "Istana Kampong Gelam was reserved for the mosque and the East India Company contributed "
+        "3,000 Spanish dollars to its building fund. The original mosque was a single-storey "
+        "brick structure with a traditional two-tiered roof. The present larger mosque was "
+        "designed by Denis Santry of Swan & Maclaren and built through fundraising supported by "
+        "Muslims from different ethnic communities. A striking detail is the belt of glass "
+        "bottles around the base of each golden dome: these were donated by poorer members of "
+        "the community so they too could contribute. The mosque also historically served as a "
+        "stopover for regional pilgrims travelling to Mecca. Official source: "
+        "https://www.roots.gov.sg/places/places-landing/Places/national-monuments/sultan-mosque"
+    ),
 }
 
 OFFICIAL_AREA_CONTEXT = {
@@ -347,11 +360,15 @@ def route_context(route: PlannedRoute) -> str:
 
 
 def place_context(place: Place) -> str:
+    supplemental = OFFICIAL_PLACE_CONTEXT.get(
+        place.name, "No supplemental official context supplied for this place."
+    )
     return (
         f"Name: {place.name}\n"
         f"Type: {place.place_type}\n"
         f"Address: {place.address or 'Not supplied'}\n"
         f"Official description: {place.description or 'No description supplied'}\n"
-        f"Official source: {place.official_url}"
+        f"Official source: {place.official_url}\n"
+        f"Supplemental official context: {supplemental}"
     )
 
