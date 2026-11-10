@@ -18,7 +18,22 @@ CURATED_PHOTOS = {
         "path": STATIC_DIR / "former-nagore-dargah.jpg",
         "caption": "Former Nagore Dargah · Photo: Philip Nalangan (CC BY 4.0)",
         "source": "https://commons.wikimedia.org/wiki/File:Nagore_Dargah_Singapore.jpg",
-    }
+    },
+    "Sri Mariamman Temple": {
+        "path": STATIC_DIR / "sri-mariamman-temple.jpg",
+        "caption": "Sri Mariamman Temple · Photo: -jkb- (CC BY-SA 3.0)",
+        "source": "https://commons.wikimedia.org/wiki/File:Singapore_Sri_Mariamman_temple.jpg",
+    },
+    "Jamae Mosque": {
+        "path": STATIC_DIR / "jamae-mosque.jpg",
+        "caption": "Jamae Mosque · Photo: Bjoertvedt (CC BY-SA 4.0)",
+        "source": "https://commons.wikimedia.org/wiki/File:Singapore_-_Temple_Street_-_Jamae_Chulia_Mosque_IMG_9236.jpg",
+    },
+    "Thian Hock Keng": {
+        "path": STATIC_DIR / "thian-hock-keng.jpg",
+        "caption": "Thian Hock Keng · Photo: Basile Morin (CC BY-SA 4.0)",
+        "source": "https://commons.wikimedia.org/wiki/File:Thian_Hock_Keng_Temple_Singapore.jpg",
+    },
 }
 OFFICIAL_PHOTO_OVERRIDES = {
     "Pondok Peranakan Gelam Club": (

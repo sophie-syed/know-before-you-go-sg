@@ -62,6 +62,15 @@ Do not commit `.streamlit/secrets.toml`.
 
 Local dataset snapshots are included so the educational prototype remains available if a download service is temporarily unavailable.
 
+## Photo attribution
+
+Most place photographs are supplied through the linked National Heritage Board record. The following locally stored fallbacks are openly licensed Wikimedia Commons photographs; the app displays the creator, licence and source link beside each image:
+
+- Former Nagore Dargah — Philip Nalangan, CC BY 4.0
+- Sri Mariamman Temple — -jkb-, CC BY-SA 3.0
+- Jamae Mosque — Bjoertvedt, CC BY-SA 4.0
+- Thian Hock Keng — Basile Morin, CC BY-SA 4.0
+
 ## Current limitations
 
 - Without a OneMap token, distance uses straight-line estimates rather than turn-by-turn routing.
