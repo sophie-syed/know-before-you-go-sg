@@ -105,8 +105,8 @@ def setup_page(title: str, icon: str = "🧭") -> None:
         h1, h2, h3 {font-family:"Avenir Next Rounded", "Arial Rounded MT Bold", "Avenir Next", sans-serif; letter-spacing:-.025em; color:var(--kbyg-ink);}
         .block-container {padding-top:2rem; padding-bottom:4rem; max-width:1180px;}
         .hero {position:relative; overflow:hidden; box-sizing:border-box; min-height:260px; padding:2.4rem 2.2rem; border-radius:28px; background-color:#FFF3D9; background-image:url("app/static/heritage-shophouses-hero.png"); background-size:cover; background-position:center; color:var(--kbyg-ink); margin:.65rem 0 1.25rem; box-shadow:0 10px 0 #F5C451; border:2px solid #183F3A; display:flex; flex-direction:column; justify-content:center;}
-        .hero:before {content:""; position:absolute; z-index:0; inset:0; background:linear-gradient(90deg,#FFF9ED 0%,#FFF9ED 48%,rgba(255,249,237,.97) 61%,rgba(255,249,237,.72) 74%,rgba(255,249,237,.08) 92%);}
-        .hero-copy {position:relative; z-index:1; max-width:50%;}
+        .hero:before {content:""; position:absolute; z-index:0; inset:0; background:linear-gradient(90deg,#FFF9ED 0%,#FFF9ED 52%,rgba(255,249,237,.97) 64%,rgba(255,249,237,.72) 77%,rgba(255,249,237,.08) 94%);}
+        .hero-copy {position:relative; z-index:1; max-width:60%;}
         .hero h1 {margin:0 0 .45rem 0; color:var(--kbyg-ink); font-size:clamp(2.1rem,5vw,3.45rem); text-shadow:0 2px 0 white;}
         .hero p {margin:0; font-size:1.08rem; font-weight:650; line-height:1.55; color:var(--kbyg-ink); text-shadow:0 1px 0 white;}
         .hero-eyebrow {position:relative; z-index:1; width:max-content; margin-bottom:.7rem; padding:.34rem .7rem; border:1.5px solid var(--kbyg-ink); border-radius:999px; background:rgba(255,249,237,.9); color:#B43F32; font-size:.71rem; font-weight:850; letter-spacing:.13em; text-transform:uppercase; box-shadow:2px 2px 0 var(--kbyg-sun);}

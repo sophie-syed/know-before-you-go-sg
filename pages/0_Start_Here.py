@@ -8,7 +8,7 @@ setup_page("Start Here")
 places = load_places()
 
 hero(
-    "Know Before You Go SG",
+    "Know Before You Go\u00a0SG\u00a0🇸🇬",
     "Choose whether to plan a complete outing or explore one place, using official Singapore heritage information.",
 )
 

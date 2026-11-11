@@ -17,7 +17,7 @@ from kbyg.ui import hero, place_card, place_map, place_photo, route_table, setup
 
 setup_page("Plan My Outing", "🗺️")
 hero(
-    "Create my heritage trail",
+    "Create my heritage\u00a0trail",
     "Choose your neighbourhood, available time and curiosities. We’ll turn them into a pocket-sized Singapore adventure you can open in Google Maps and carry on your phone.",
 )
 
