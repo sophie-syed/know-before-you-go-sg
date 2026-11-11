@@ -79,6 +79,32 @@ st.write(
     "15-minute visit. Candidates that would exceed the user’s time or walking limit are removed."
 )
 
+with st.expander("Exact rules used by this prototype"):
+    st.markdown(
+        """
+| Stage | Rule used |
+|---|---|
+| Starting point | Uses a fixed coordinate for the selected neighbourhood, not the visitor’s live location. |
+| Nearby places | Searches within the selected walking limit × 0.8 + 0.5 km, capped at 4.5 km. |
+| Interest matching | Searches each place’s official name, description and address for predefined keywords. |
+| Interest score | Each matched keyword adds 2 points, up to 3 matches for each selected interest. |
+| Record bonus | Adds 1 point when the government record contains a description. |
+| Monument bonus | Adds 1 point for a national monument. |
+| Candidate shortlist | Sorts by interest match, then proximity and name; the first 24 places form the candidate pool. |
+| Stop ordering | Selects a nearby next stop, with a small preference for stronger interest matches. |
+| Number of stops | Allows 2–6 stops depending on the time available. |
+| Visit time | Assumes 15 minutes at every stop. |
+| Walking pace | Assumes 4.5 km per hour when OneMap is not configured. |
+| Route limits | Skips an additional stop when it would exceed the selected time or walking-distance limit. |
+| Distance estimate | Adds straight-line distances from the starting point through successive stops; it does not include a return journey. |
+| Try different stops | Excludes the current places and runs the same selection rules again. |
+
+**What influences the route?** Starting area, available time, maximum walking distance and interests.
+
+**What influences only the AI explanation?** The selected audience and guide style. The LLM does not choose stops or calculate distances.
+        """
+    )
+
 st.subheader("LLM implementation")
 st.write(
     "The OpenAI Responses API receives only the selected NHB records, the user’s general audience "
