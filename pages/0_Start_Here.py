@@ -21,9 +21,10 @@ journey_one, journey_two = st.columns(2)
 with journey_one:
     with st.container(key="choice_plan", border=True):
         st.markdown("### 🗺️ I want a ready-made outing")
-        st.write(
-            "Choose your area, available time, walking distance and interests. "
-            "Get a suggested route with photographs, stories and navigation links."
+        st.markdown(
+            '<div class="choice-copy">Choose your area, available time, walking distance and '
+            'interests. Get a suggested route with photographs, stories and navigation links.</div>',
+            unsafe_allow_html=True,
         )
         if st.button(
             "Plan my outing →",
@@ -36,9 +37,10 @@ with journey_one:
 with journey_two:
     with st.container(key="choice_explore", border=True):
         st.markdown("### 🔎 I want to discover a heritage place")
-        st.write(
-            "Search the heritage map—or let the app surprise you—then view photographs, "
-            "discover its story and ask the cultural guide your own questions."
+        st.markdown(
+            '<div class="choice-copy">Search the heritage map—or let the app surprise you—then '
+            'view photographs, discover its story and ask the cultural guide your own questions.</div>',
+            unsafe_allow_html=True,
         )
         if st.button(
             "Explore heritage places →",

@@ -134,6 +134,7 @@ def setup_page(title: str, icon: str = "🧭") -> None:
         .st-key-choice_plan, .st-key-choice_explore {min-height:220px; background:rgba(255,255,255,.82); border-radius:22px; box-shadow:7px 7px 0 var(--kbyg-mint);}
         .st-key-choice_plan p, .st-key-choice_explore p {font-weight:400; line-height:1.55;}
         .st-key-choice_plan h3, .st-key-choice_explore h3 {font-size:1.2rem; margin-top:.2rem;}
+        .choice-copy {min-height:5rem; margin:.25rem 0 .65rem; font-weight:400; line-height:1.55;}
         button[kind="primary"] {background:var(--kbyg-coral) !important; color:white !important;}
         [data-testid="stDataFrame"] {border-radius:18px; overflow:hidden; border:1.5px solid #CADBD1;}
         hr {border-color:#B8D5C6 !important;}
@@ -143,6 +144,7 @@ def setup_page(title: str, icon: str = "🧭") -> None:
             .hero-copy {max-width:100%;}
             .journey-card {min-height:auto; margin-bottom:1.5rem;}
             .st-key-choice_plan, .st-key-choice_explore {min-height:auto; margin-bottom:1rem;}
+            .choice-copy {min-height:auto;}
         }
         </style>
         """,
