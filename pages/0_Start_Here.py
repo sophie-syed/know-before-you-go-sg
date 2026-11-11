@@ -70,8 +70,15 @@ with left:
     )
     st.image(
         "static/singapore-heritage-discovery-map.png",
-        caption="An illustrated invitation to discover Singapore’s many heritage stories.",
+        caption=(
+            "A playful portrait of Singapore’s heritage—from places of worship and civic "
+            "landmarks to colourful shophouses."
+        ),
         width="stretch",
+    )
+    st.caption(
+        "Illustration created with OpenAI image generation for this educational prototype. "
+        "Landmarks are decorative and not positioned for navigation."
     )
 
 with right:

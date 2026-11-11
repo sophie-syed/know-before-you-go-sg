@@ -72,6 +72,8 @@ Most place photographs are supplied through the linked National Heritage Board r
 - Jamae Mosque — Bjoertvedt, CC BY-SA 4.0
 - Thian Hock Keng — Basile Morin, CC BY-SA 4.0
 
+The decorative Singapore heritage map on the Start Here page is original AI-generated artwork created with OpenAI image generation for this educational prototype. Its landmark positions are illustrative rather than navigational.
+
 ## Current limitations
 
 - Without a OneMap token, distance uses straight-line estimates rather than turn-by-turn routing.
