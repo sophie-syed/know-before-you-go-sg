@@ -67,6 +67,7 @@ Local dataset snapshots are included so the educational prototype remains availa
 Most place photographs are supplied through the linked National Heritage Board record. The following locally stored fallbacks are openly licensed Wikimedia Commons photographs; the app displays the creator, licence and source link beside each image:
 
 - Former Nagore Dargah — Philip Nalangan, CC BY 4.0
+- Former Kandang Kerbau Hospital — Aranho, public domain
 - 38 Oxley Road — Bahnfrend, CC BY-SA 4.0
 - Sri Mariamman Temple — -jkb-, CC BY-SA 3.0
 - Jamae Mosque — Bjoertvedt, CC BY-SA 4.0

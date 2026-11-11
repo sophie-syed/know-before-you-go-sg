@@ -24,6 +24,11 @@ CURATED_PHOTOS = {
         "caption": "Former Nagore Dargah · Photo: Philip Nalangan (CC BY 4.0)",
         "source": "https://commons.wikimedia.org/wiki/File:Nagore_Dargah_Singapore.jpg",
     },
+    "Former Kandang Kerbau Hospital": {
+        "path": STATIC_DIR / "former-kandang-kerbau-hospital.jpg",
+        "caption": "Former Kandang Kerbau Hospital · Photo: Aranho (public domain)",
+        "source": "https://commons.wikimedia.org/wiki/File:LTA_office_(old_KKH).JPG",
+    },
     "Sri Mariamman Temple": {
         "path": STATIC_DIR / "sri-mariamman-temple.jpg",
         "caption": "Sri Mariamman Temple · Photo: -jkb- (CC BY-SA 3.0)",
