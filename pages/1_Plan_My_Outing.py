@@ -183,36 +183,39 @@ if route:
     st.caption("Choose what you would like to do next. Your generated outing remains on this page.")
     action_cols = st.columns(3)
     with action_cols[0]:
-        st.markdown("**Try different stops**")
-        st.caption("Keep your current preferences, but replace these places with another route that fits.")
-        settings = st.session_state.get("route_settings", {})
-        if st.button("🔀 Try different stops", width="stretch") and settings:
-            alternative = plan_route(
-                places=places,
-                excluded_place_ids=[stop.place.place_id for stop in route.stops],
-                **settings,
-            )
-            if alternative.stops:
-                st.session_state["planned_route"] = alternative
-                st.session_state.pop("route_story", None)
-                st.session_state.pop("route_story_error", None)
-                st.rerun()
-            else:
-                st.info("No different route fits these limits. Try allowing more time or walking distance.")
+        with st.container(key="outing_action_shuffle", border=True):
+            st.markdown("**Try different stops**")
+            st.caption("Keep your current preferences, but replace these places with another route that fits.")
+            settings = st.session_state.get("route_settings", {})
+            if st.button("🔀 Try different stops", width="stretch") and settings:
+                alternative = plan_route(
+                    places=places,
+                    excluded_place_ids=[stop.place.place_id for stop in route.stops],
+                    **settings,
+                )
+                if alternative.stops:
+                    st.session_state["planned_route"] = alternative
+                    st.session_state.pop("route_story", None)
+                    st.session_state.pop("route_story_error", None)
+                    st.rerun()
+                else:
+                    st.info("No different route fits these limits. Try allowing more time or walking distance.")
     with action_cols[1]:
-        st.markdown("**Open the full route**")
-        st.caption("Send every stop to Google Maps for connected walking navigation on your phone.")
-        st.link_button("🗺️ Open in Google Maps", google_maps_route_url(route), width="stretch")
+        with st.container(key="outing_action_maps", border=True):
+            st.markdown("**Open the full route**")
+            st.caption("Send every stop to Google Maps for connected walking navigation on your phone.")
+            st.link_button("🗺️ Open in Google Maps", google_maps_route_url(route), width="stretch")
     with action_cols[2]:
-        st.markdown("**Keep an offline reference**")
-        st.caption("Download the story, itinerary, addresses and official links to read again later.")
-        st.download_button(
-            "⬇️ Download outing guide",
-            data=route_markdown(route),
-            file_name=f"{route.start_name.lower().replace(' ', '-')}-heritage-walk.md",
-            mime="text/markdown",
-            width="stretch",
-        )
+        with st.container(key="outing_action_download", border=True):
+            st.markdown("**Keep an offline reference**")
+            st.caption("Download the story, itinerary, addresses and official links to read again later.")
+            st.download_button(
+                "⬇️ Download outing guide",
+                data=route_markdown(route),
+                file_name=f"{route.start_name.lower().replace(' ', '-')}-heritage-walk.md",
+                mime="text/markdown",
+                width="stretch",
+            )
 
     st.caption("Google Maps requires a connection for walking directions. The downloaded guide can be kept for offline reference.")
 
