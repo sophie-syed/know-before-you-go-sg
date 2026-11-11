@@ -136,6 +136,10 @@ def setup_page(title: str, icon: str = "🧭") -> None:
         .st-key-choice_plan h3, .st-key-choice_explore h3 {font-size:1.2rem; margin-top:.2rem;}
         .choice-copy {min-height:5rem; margin:.25rem 0 .65rem; font-weight:400; line-height:1.55;}
         .st-key-outing_action_shuffle, .st-key-outing_action_maps, .st-key-outing_action_download {min-height:175px; background:rgba(255,255,255,.72); border-radius:18px; box-shadow:4px 4px 0 var(--kbyg-mint);}
+        [class*="st-key-route_gallery_"] {min-height:340px; margin-bottom:1rem; background:rgba(255,255,255,.68); border-radius:18px;}
+        [class*="st-key-route_gallery_"] img {width:100% !important; height:230px !important; object-fit:contain !important; object-position:center; background:#F4F1E8; border-radius:12px;}
+        [class*="st-key-route_gallery_"] figcaption {min-height:2.8rem; line-height:1.35; text-align:left;}
+        [class*="st-key-route_gallery_"] a {font-size:.86rem; font-weight:750; color:#B43F32;}
         button[kind="primary"] {background:var(--kbyg-coral) !important; color:white !important;}
         [data-testid="stDataFrame"] {border-radius:18px; overflow:hidden; border:1.5px solid #CADBD1;}
         hr {border-color:#B8D5C6 !important;}
@@ -147,6 +151,8 @@ def setup_page(title: str, icon: str = "🧭") -> None:
             .st-key-choice_plan, .st-key-choice_explore {min-height:auto; margin-bottom:1rem;}
             .choice-copy {min-height:auto;}
             .st-key-outing_action_shuffle, .st-key-outing_action_maps, .st-key-outing_action_download {min-height:auto; margin-bottom:.8rem;}
+            [class*="st-key-route_gallery_"] {min-height:auto;}
+            [class*="st-key-route_gallery_"] img {height:210px !important;}
         }
         </style>
         """,

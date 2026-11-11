@@ -1,3 +1,4 @@
+import html
 from urllib.parse import quote_plus
 
 import streamlit as st
@@ -242,12 +243,18 @@ if route:
                 gallery.append((photo, caption, source))
         if gallery:
             st.markdown("#### Places in this story")
-            gallery_cols = st.columns(min(3, len(gallery)))
+            gallery_column_count = 2 if len(gallery) >= 4 else min(3, len(gallery))
+            gallery_cols = st.columns(gallery_column_count)
             for index, (photo, caption, source) in enumerate(gallery):
                 with gallery_cols[index % len(gallery_cols)]:
-                    st.image(photo, caption=caption, width="stretch")
-                    if source:
-                        st.link_button("Photo source and licence ↗", source, width="stretch")
+                    with st.container(key=f"route_gallery_{index}", border=True):
+                        st.image(photo, caption=caption, width="stretch")
+                        if source:
+                            safe_source = html.escape(source, quote=True)
+                            st.markdown(
+                                f'<a href="{safe_source}" target="_blank">Photo source and licence ↗</a>',
+                                unsafe_allow_html=True,
+                            )
 
         if not official_walking:
             st.caption(
