@@ -104,7 +104,7 @@ def setup_page(title: str, icon: str = "🧭") -> None:
             var(--kbyg-cream);}
         h1, h2, h3 {font-family:"Avenir Next Rounded", "Arial Rounded MT Bold", "Avenir Next", sans-serif; letter-spacing:-.025em; color:var(--kbyg-ink);}
         .block-container {padding-top:2rem; padding-bottom:4rem; max-width:1180px;}
-        .hero {position:relative; overflow:hidden; min-height:260px; padding:2.4rem 2.2rem; border-radius:28px; background-color:#FFF3D9; background-image:url("app/static/heritage-shophouses-hero.png"); background-size:cover; background-position:center; color:var(--kbyg-ink); margin-bottom:1.25rem; box-shadow:0 10px 0 #F5C451; border:2px solid #183F3A; display:flex; flex-direction:column; justify-content:center;}
+        .hero {position:relative; overflow:hidden; box-sizing:border-box; min-height:260px; padding:2.4rem 2.2rem; border-radius:28px; background-color:#FFF3D9; background-image:url("app/static/heritage-shophouses-hero.png"); background-size:cover; background-position:center; color:var(--kbyg-ink); margin:.65rem 0 1.25rem; box-shadow:0 10px 0 #F5C451; border:2px solid #183F3A; display:flex; flex-direction:column; justify-content:center;}
         .hero:before {content:""; position:absolute; z-index:0; inset:0; background:linear-gradient(90deg,#FFF9ED 0%,#FFF9ED 48%,rgba(255,249,237,.97) 61%,rgba(255,249,237,.72) 74%,rgba(255,249,237,.08) 92%);}
         .hero-copy {position:relative; z-index:1; max-width:50%;}
         .hero h1 {margin:0 0 .45rem 0; color:var(--kbyg-ink); font-size:clamp(2.1rem,5vw,3.45rem); text-shadow:0 2px 0 white;}
@@ -131,9 +131,9 @@ def setup_page(title: str, icon: str = "🧭") -> None:
         .journey-card strong {display:block; margin-bottom:.65rem; font-family:"Avenir Next Rounded", "Arial Rounded MT Bold", "Avenir Next", sans-serif; font-size:1.3rem; color:var(--kbyg-ink);}
         .journey-card span {display:block; line-height:1.55; color:var(--kbyg-ink);}
         .journey-card em {display:block; margin-top:1rem; color:#B43F32; font-style:normal; font-weight:800;}
-        .st-key-journey_plan button, .st-key-journey_explore button {min-height:190px; padding:1.35rem 1.45rem !important; border:2px solid var(--kbyg-ink) !important; border-radius:22px !important; background:rgba(255,255,255,.82) !important; color:var(--kbyg-ink) !important; box-shadow:7px 7px 0 var(--kbyg-mint) !important; white-space:pre-wrap; text-align:left; justify-content:flex-start; font-size:1rem; line-height:1.55;}
-        .st-key-journey_plan button p, .st-key-journey_explore button p {font-weight:650;}
-        .st-key-journey_plan button:hover, .st-key-journey_explore button:hover {transform:translate(3px,3px); box-shadow:4px 4px 0 var(--kbyg-sun) !important; background:#fffdf7 !important;}
+        .st-key-choice_plan, .st-key-choice_explore {min-height:220px; background:rgba(255,255,255,.82); border-radius:22px; box-shadow:7px 7px 0 var(--kbyg-mint);}
+        .st-key-choice_plan p, .st-key-choice_explore p {font-weight:400; line-height:1.55;}
+        .st-key-choice_plan h3, .st-key-choice_explore h3 {font-size:1.2rem; margin-top:.2rem;}
         button[kind="primary"] {background:var(--kbyg-coral) !important; color:white !important;}
         [data-testid="stDataFrame"] {border-radius:18px; overflow:hidden; border:1.5px solid #CADBD1;}
         hr {border-color:#B8D5C6 !important;}
@@ -142,7 +142,7 @@ def setup_page(title: str, icon: str = "🧭") -> None:
             .hero:before {background:linear-gradient(180deg,rgba(255,249,237,.99) 0%,rgba(255,249,237,.94) 48%,rgba(255,249,237,.28) 78%,rgba(255,249,237,.05) 100%);}
             .hero-copy {max-width:100%;}
             .journey-card {min-height:auto; margin-bottom:1.5rem;}
-            .st-key-journey_plan button, .st-key-journey_explore button {min-height:150px; margin-bottom:.65rem;}
+            .st-key-choice_plan, .st-key-choice_explore {min-height:auto; margin-bottom:1rem;}
         }
         </style>
         """,

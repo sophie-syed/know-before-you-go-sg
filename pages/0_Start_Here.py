@@ -15,23 +15,35 @@ hero(
 required_disclaimer()
 
 st.subheader("What would you like to do?")
-st.write("Choose either card—the whole card is clickable.")
+st.write("Choose the path that suits you 👇")
 
 journey_one, journey_two = st.columns(2)
 with journey_one:
-    with st.container(key="journey_plan"):
+    with st.container(key="choice_plan", border=True):
+        st.markdown("### 🗺️ I want a ready-made outing")
+        st.write(
+            "Choose your area, available time, walking distance and interests. "
+            "Get a suggested route with photographs, stories and navigation links."
+        )
         if st.button(
-            "🗺️  I want a ready-made outing\n\nChoose your area, available time, walking distance "
-            "and interests. Get a suggested route with photographs, stories and navigation links.\n\nPlan my outing →",
+            "Plan my outing →",
+            key="start_plan_cta",
+            type="primary",
             width="stretch",
         ):
             st.switch_page("pages/1_Plan_My_Outing.py")
 
 with journey_two:
-    with st.container(key="journey_explore"):
+    with st.container(key="choice_explore", border=True):
+        st.markdown("### 🔎 I want to discover a heritage place")
+        st.write(
+            "Search the heritage map—or let the app surprise you—then view photographs, "
+            "discover its story and ask the cultural guide your own questions."
+        )
         if st.button(
-            "🔎  I want to discover a particular place\n\nSearch the heritage map, open a place card, view "
-            "photographs and ask the cultural guide follow-up questions.\n\nExplore heritage places →",
+            "Explore heritage places →",
+            key="start_explore_cta",
+            type="primary",
             width="stretch",
         ):
             st.switch_page("pages/2_Explore_Heritage_Places.py")
@@ -56,6 +68,11 @@ with left:
         "and what you want to learn. It will suggest a manageable sequence of national "
         "monuments and marked historic sites, then explain the stories connecting them."
     )
+    st.image(
+        "static/singapore-heritage-discovery-map.png",
+        caption="An illustrated invitation to discover Singapore’s many heritage stories.",
+        width="stretch",
+    )
 
 with right:
     st.markdown("### Heritage places available")
@@ -71,12 +88,8 @@ st.write(
     "**multicultural history** and **architecture**, and a comfortable walking distance. "
     "Open the planner and select those options to create your own version."
 )
-st.page_link(
-    "pages/1_Plan_My_Outing.py",
-    label="Open the outing planner",
-    icon="🧭",
-    use_container_width=True,
-)
+if st.button("Create this Telok Ayer outing →", type="primary", key="inspiration_cta"):
+    st.switch_page("pages/1_Plan_My_Outing.py")
 
 st.subheader("Built from public information")
 st.write(
